@@ -310,3 +310,7 @@ launch goes between staging load and cannon output"""
 kCannonFillPCMID = 5
 """id of the specisic port on the PCM
 fill goes between 120psi tank and small tank"""
+
+# cannon but in spike mode
+kCannonLaunchSpikePWMID = 1
+kCannonFillSpikePWMID = 2

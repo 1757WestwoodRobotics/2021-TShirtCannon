@@ -1,4 +1,4 @@
-from wpilib._wpilib import Compressor
+from wpilib import Compressor
 from commands.blinklight import BlinkLight
 from commands2 import ParallelCommandGroup
 from commands.hornhonk import HornHonk
@@ -32,6 +32,7 @@ from operatorinterface import OperatorInterface
 
 from networktables import NetworkTables
 
+
 class RobotContainer:
     """
     This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -61,6 +62,7 @@ class RobotContainer:
         # self.light2.setRaw(65535)
         # Autonomous routines
         # A simple auto routine that drives forward a specified distance, and then stops.
+
         self.simpleAuto = DriveDistance(
             constants.kAutoDriveDistance,
             constants.kAutoDriveSpeedFactor,
@@ -92,7 +94,7 @@ class RobotContainer:
             ))
 
         self.camera.setDefaultCommand(
-            RotateCamera(self.camera,   
+            RotateCamera(self.camera,
                          self.operatorInterface.cameraControls.leftRight,
                          self.operatorInterface.cameraControls.upDown))
 
@@ -124,7 +126,6 @@ class RobotContainer:
             *self.operatorInterface.fillCannon).whenPressed(
                 SetCannon(self.cannon, SetCannon.Mode.Fill))
 
-
         commands2.button.JoystickButton(
             *self.operatorInterface.launchCannon).whenPressed(
                 SetCannon(self.cannon, SetCannon.Mode.Launch))
@@ -135,8 +136,7 @@ class RobotContainer:
 
         commands2.button.JoystickButton(
             *self.operatorInterface.closeValves).whenPressed(
-                SetCannon(self.cannon, SetCannon.Mode.Off)
-            )
+                SetCannon(self.cannon, SetCannon.Mode.Off))
 
         commands2.button.POVButton(
             *self.operatorInterface.returnModeControl).whileHeld(
@@ -145,12 +145,9 @@ class RobotContainer:
                         self.drive, self.operatorInterface.scaler,
                         self.operatorInterface.chassisControls.rotation),
                     BlinkLight(self.light, 1, 100)))
-        
-        commands2.button.JoystickButton(
-            *self.operatorInterface.hornControl).whileHeld(
-                HornHonk(self.horn)
-            )
 
+        commands2.button.JoystickButton(
+            *self.operatorInterface.hornControl).whileHeld(HornHonk(self.horn))
 
         # commands2.button.JoystickButton(
         #     *self.operatorInterface.honkControl

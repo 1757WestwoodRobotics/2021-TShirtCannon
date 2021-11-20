@@ -2,7 +2,7 @@
 
 ## XBOX
 
-# SIM
+# SIM / Driverstation
 
 | Button                  | Number |
 | ----------------------- | ------ |

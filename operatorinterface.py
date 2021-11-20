@@ -101,8 +101,7 @@ class OperatorInterface:
                            )  # button to fill the cannon for firing
         self.launchCannon = (self.driveController,
                              driveControls["launchCannon"])  #FIRE!
-        self.closeValves = (self.driveController,
-                             driveControls["closeValves"])
+        self.closeValves = (self.driveController, driveControls["closeValves"])
 
         self.coordinateModeControl = (
             self.driveController, driveControls["fieldRelative"]
@@ -128,7 +127,8 @@ class OperatorInterface:
 
         self.lightControl = Abs(lambda: self.driveController.getRawAxis(
             driveControls["lightControl"]
-        ))  # control for the lights (trigger axis by default)
+            if controlScheme["lightsControlledByCamera"] else camControls[
+                "light"]))  # control for the lights (trigger axis by default)
 
         self.hornControl = (self.driveController, driveControls["horn"])
 

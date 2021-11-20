@@ -1,6 +1,7 @@
 {
-  "drive": "THRUSTMASTER_DRIVE",
+  "drive": "XBOX_DRIVE",
   "camera": "XBOX_CAMERA",
+  "lightsControlledByCamera": true,
 
   "XBOX_DRIVE_SIM": {
     "forwardsBackwards": 1,
@@ -13,6 +14,8 @@
     "resetSwerveControl": 3,
     "launchCannon": 8,
     "fillCannon": 7,
+    "horn": 5,
+    "closeValves": 9,
 
     "setWaypoint": 180,
     "goToWaypoint": 0
@@ -29,6 +32,8 @@
     "resetSwerveControl": 3,
     "launchCannon": 8,
     "fillCannon": 7,
+    "horn": 5,
+    "closeValves": 9,
 
     "setWaypoint": 180,
     "goToWaypoint": 0
@@ -64,6 +69,7 @@
     "launchCannon": 1,
     "fillCannon": 2,
     "horn": 3,
+    "closeValves": 14,
 
     "setWaypoint": 180,
     "goToWaypoint": 0
@@ -71,10 +77,12 @@
 
   "XBOX_CAMERA_SIM": {
     "leftRight": 0,
-    "upDown": 1
+    "upDown": 1,
+    "light": 2
   },
   "XBOX_CAMERA_DRIVERSTATION": {
     "leftRight": 0,
-    "upDown": 1
+    "upDown": 1,
+    "light": 2
   }
 }

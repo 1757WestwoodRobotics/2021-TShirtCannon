@@ -42,9 +42,10 @@ class TargetDrive(CommandBase):
             xDistance = self.table.getNumber("tx", 0)
             rotation = self.Deadband(xDistance/5, 0.1)
 
-            #move to object, scale speed based on how close object is (based on target size, ta)
+            #move to object, scale speed based on how close object is and on how much it needs to rotate (based on target size, ta, and distance from center, tx)
+            speedScale = 1 - abs(xDistance)/27
             objSize = self.table.getNumber("ta", 100)
-            speed = min(1, self.Deadband(25/objSize, 0.5))
+            speed = min(1, self.Deadband(25/objSize * speedScale, 0.5))
             self.drive.arcadeDriveWithFactors(speed, 0, rotation, DriveSubsystem.CoordinateMode.RobotRelative)
 
     def end(self, interrupted: bool) -> None:

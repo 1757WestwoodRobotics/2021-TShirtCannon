@@ -15,7 +15,8 @@ class TargetDrive(CommandBase):
     def execute(self) -> None:
         if not self.table.getNumber('ty'):
             #rotate in place slowly
-            pass
+            self.table.putNumber("ledMode", 2)
+            self.drive.arcadeDriveWithFactors(0, 0, 0.25, DriveSubsystem.CoordinateMode.RobotRelative)
         else:
             #get distance of object from center (tx) rotate towards it
             #move to object, scale speed based on how close objeect is (based on target size, ta)

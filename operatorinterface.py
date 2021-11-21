@@ -87,7 +87,12 @@ class OperatorInterface:
 
         self.scaler = lambda: (
             self.driveController.getRawAxis(driveControls["scaler"]) - 1
-        ) * -0.5  # motor scaler, used to decrease the velocity through a single control
+        ) * -1  # motor scaler, used to decrease the velocity through a single control
+        
+        #TODO: add button to bindings
+        self.trackControl = (
+            self.driveController, 1
+        )
 
         self.returnPositionInput = (
             self.driveController, driveControls["setWaypoint"], 0

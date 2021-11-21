@@ -21,20 +21,32 @@ class TargetDrive(CommandBase):
             return input
 
     def execute(self) -> None:
-
         #set camera level to ground 
         #alternate solution: find PWM value and hard set
-        pitch = self.table.getNumberArray("camtran")[4]
+        pitch = self.table.getNumberArray("camtran", [0, 0, 0, 0, 0, 0])[4]
         self.camera.setCameraRotation(0, self.camera.upDown.get() + self.Deadband(pitch * -1, 0.1))
 
-        if not self.table.getNumber('ty'):
-            #rotate in place slowly
+        if not self.table.getNumber('ty', 0):
+            #blink limelight
             self.table.putNumber("ledMode", 2)
+            
+            #rotate in place slowly
             self.drive.arcadeDriveWithFactors(0, 0, 0.25, DriveSubsystem.CoordinateMode.RobotRelative)
         else:
-            #get distance of object from center (tx) rotate towards it
-            #move to object, scale speed based on how close objeect is (based on target size, ta)
-            pass
+            #TODO: compensate for latency, adjust scaling and deadband
+            
+            #set limelight on
+            self.table.putNumber("ledMode", 3)
 
-    def end(self) -> None:
+            #get distance of object from center (tx), scale rotation based on how far object from center -27 to 27 degrees
+            xDistance = self.table.getNumber("tx", 0)
+            rotation = self.Deadband(xDistance/5, 0.1)
+
+            #move to object, scale speed based on how close object is (based on target size, ta)
+            objSize = self.table.getNumber("ta", 100)
+            speed = min(1, self.Deadband(25/objSize, 0.5))
+            self.drive.arcadeDriveWithFactors(speed, 0, rotation, DriveSubsystem.CoordinateMode.RobotRelative)
+
+    def end(self, interrupted: bool) -> None:
+        #turn off limelight
         self.table.putNumber("ledMode", 1)

@@ -32,6 +32,7 @@ from operatorinterface import OperatorInterface
 
 from networktables import NetworkTables
 
+from commands.targetdrive import TargetDrive
 
 class RobotContainer:
     """
@@ -82,7 +83,6 @@ class RobotContainer:
 
         # Put the chooser on the dashboard
         wpilib.SmartDashboard.putData("Autonomous", self.chooser)
-
         self.configureButtonBindings()
 
         self.drive.setDefaultCommand(
@@ -149,6 +149,10 @@ class RobotContainer:
         commands2.button.JoystickButton(
             *self.operatorInterface.hornControl).whileHeld(HornHonk(self.horn))
 
+        commands2.button.JoystickButton(
+            *self.operatorInterface.trackControl).whileHeld(
+                TargetDrive(self.drive, NetworkTables.getTable("limelight"), self.camera)
+            )
         # commands2.button.JoystickButton(
         #     *self.operatorInterface.honkControl
         # ).whileHeld(HornHonk(self.light2))

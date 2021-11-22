@@ -116,6 +116,8 @@ class OperatorInterface:
             self.driveController, driveControls["resetSwerveControl"]
         )  # reset swerve drive orientation and motors
 
+        self.targetControl = (self.driveController, 1)
+        
         self.cameraControls = CameraControl(  # camera related axis control
             Invert(  # left/right
                 Deadband(

@@ -149,7 +149,7 @@ class RobotContainer:
                     BlinkLight(self.light, 1, 100)))
 
         commands2.button.JoystickButton(
-            *self.operatorInterface.trackControl).whileHeld(
+            *self.operatorInterface.targetControl).whileHeld(
                 TargetDrive(self.drive, NetworkTables.getTable("limelight"), self.camera))
         # commands2.button.JoystickButton(
         #     *self.operatorInterface.honkControl

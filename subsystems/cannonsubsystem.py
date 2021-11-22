@@ -5,6 +5,8 @@ import wpilib
 from wpilib import AnalogInput
 import constants
 
+def map(pressureinput: float, voltmin: float, voltmax: float, pressuremin: float, pressuremax: float) -> None:
+    return (pressureinput - pressuremin) * ((voltmax - voltmin) / (pressuremax - pressuremin)) + voltmin
 
 class CannonSubsystem(SubsystemBase):
     def __init__(self) -> None:
@@ -15,10 +17,6 @@ class CannonSubsystem(SubsystemBase):
 
         self.fillSolonoid.set(False)
         self.launchSolonoid.set(0.0)
-
-    def map(pressureinput: float, voltmin: float, voltmax: float, pressuremin: float, pressuremax: float) -> None:
-        return (pressureinput - pressuremin) * ((voltmax - voltmin) / (pressuremax - pressuremin)) + voltmin
-
 
     def close(self) -> None:
         """close all the solonoids"""

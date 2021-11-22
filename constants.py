@@ -311,10 +311,6 @@ kCannonFillPCMID = 5
 fill goes between 120psi tank and small tank"""
 
 # cannon but in spike mode
-<<<<<<< HEAD
-kCannonLaunchSpikePWMID = 1
-kCannonFillSpikePWMID = 2
-=======
 kCannonLaunchVictorDeviceID = 61
 
 kCannonPressureAnalogInput = 0
@@ -324,4 +320,3 @@ kVoltageOutMin = 0.0
 kVoltageOutMax = 4.5
 kPressureInMin = 0
 kPressureInMax = 200
->>>>>>> 4c4fa1f751d5a0fce404013934471e12512165c2

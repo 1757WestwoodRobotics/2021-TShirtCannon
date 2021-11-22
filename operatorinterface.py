@@ -5,7 +5,7 @@ import typing
 import json
 
 import constants
-from subsystems.cannonsubsystem import CannonSubsystem
+from subsystems.cannonsubsystem import map
 
 AnalogInput = typing.Callable[[], float]
 
@@ -137,7 +137,15 @@ class OperatorInterface:
             if controlScheme["lightsControlledByCamera"] else camControls[
                 "light"]))  # control for the lights (trigger axis by default)
 
-        self.hornControl = (self.driveController, driveControls["horn"])
+        #self.hornControl = (self.driveController, driveControls["horn"]) This is reg button version
+
+        if controlScheme["camera"] == "XBOX_CAMERA":
+            self.hornControl = Deadband(
+                lambda: self.cameraController.getRawAxis(camControls["horn"]), constants.kXboxJoystickDeadband)
+        elif controlScheme["camera"] == "PLAYSTATION_CAMERA":
+            self.hornControl = Deadband(
+                lambda: map(self.cameraController.getRawAxis(camControls["horn"]), -1, 1, 0, 1),
+                constants.kXboxJoystickDeadband)
 
         self.chassisControls = HolonomicInput(  # drive controls, allows for any directional movement and rotation
             Invert(  # forwards / backwards

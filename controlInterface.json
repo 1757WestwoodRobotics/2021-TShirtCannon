@@ -15,7 +15,11 @@
     "launchCannon": 8,
     "fillCannon": 7,
     "horn": 5,
+<<<<<<< HEAD
     "closeValves": 9,
+=======
+    "closeValves": 10,
+>>>>>>> 4c4fa1f751d5a0fce404013934471e12512165c2
 
     "setWaypoint": 180,
     "goToWaypoint": 0
@@ -33,7 +37,11 @@
     "launchCannon": 8,
     "fillCannon": 7,
     "horn": 5,
+<<<<<<< HEAD
     "closeValves": 9,
+=======
+    "closeValves": 4,
+>>>>>>> 4c4fa1f751d5a0fce404013934471e12512165c2
 
     "setWaypoint": 180,
     "goToWaypoint": 0
@@ -70,6 +78,45 @@
     "fillCannon": 2,
     "horn": 3,
     "closeValves": 14,
+<<<<<<< HEAD
+=======
+
+    "setWaypoint": 180,
+    "goToWaypoint": 0
+  },
+  
+  "PLAYSTATION_DRIVE_DRIVERSTATION": {
+    "forwardsBackwards": 1,
+    "sideToSide": 0,
+    "rotation": 2,
+    "scaler": 3,
+    "lightControl": 4,
+
+    "fieldRelative": 6,
+    "resetSwerveControl": 3,
+    "launchCannon": 8, 
+    "fillCannon": 7,
+    "horn": 5,
+    "closeValves": 13,
+
+    "setWaypoint": 180,
+    "goToWaypoint": 0
+  },
+
+  "PLAYSTATION_DRIVE_SIM": {
+    "forwardsBackwards": 1,
+    "sideToSide": 0,
+    "rotation": 2,
+    "scaler": 3,
+    "lightControl": 4,
+
+    "fieldRelative": 6,
+    "resetSwerveControl": 3,
+    "launchCannon": 8, 
+    "fillCannon": 7,
+    "horn": 5,
+    "closeValves": 13,
+>>>>>>> 4c4fa1f751d5a0fce404013934471e12512165c2
 
     "setWaypoint": 180,
     "goToWaypoint": 0
@@ -78,11 +125,34 @@
   "XBOX_CAMERA_SIM": {
     "leftRight": 0,
     "upDown": 1,
+<<<<<<< HEAD
     "light": 2
+=======
+    "light": 2,
+    "horn": 3
+>>>>>>> 4c4fa1f751d5a0fce404013934471e12512165c2
   },
   "XBOX_CAMERA_DRIVERSTATION": {
     "leftRight": 0,
     "upDown": 1,
+<<<<<<< HEAD
     "light": 2
+=======
+    "light": 2,
+    "horn": 3
+  },
+  
+  "PLAYSTATION_CAMERA_SIM": {
+    "leftRight": 0,
+    "upDown": 1,
+    "light": 3,
+    "horn": 4
+  },
+  "PLAYSTATION_CAMERA_DRIVERSTATION": {
+    "leftRight": 0,
+    "upDown": 1,
+    "light": 3,
+    "horn": 4
+>>>>>>> 4c4fa1f751d5a0fce404013934471e12512165c2
   }
 }

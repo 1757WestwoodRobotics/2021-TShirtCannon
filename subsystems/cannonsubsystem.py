@@ -1,35 +1,43 @@
 from commands2 import SubsystemBase
-from wpilib import Relay
+from ctre import WPI_VictorSPX
+from wpilib import Solenoid
 import wpilib
+from wpilib import AnalogInput
 import constants
 
 
 class CannonSubsystem(SubsystemBase):
     def __init__(self) -> None:
         SubsystemBase.__init__(self)
-        self.launchSolonoid = Relay(constants.kCannonLaunchSpikePWMID)
-        self.fillSolonoid = Relay(constants.kCannonFillSpikePWMID)
+        self.launchSolonoid = WPI_VictorSPX(constants.kCannonLaunchVictorDeviceID)
+        self.fillSolonoid = Solenoid(constants.kPCMCannonCanID, constants.kCannonFillPCMID)
+        self.pressure = AnalogInput(constants.kCannonPressureAnalogInput)
 
-        self.fillSolonoid.set(Relay.Value.kOff)
-        self.launchSolonoid.set(Relay.Value.kOn)
+        self.fillSolonoid.set(False)
+        self.launchSolonoid.set(0.0)
+
+    def map(pressureinput: float, voltmin: float, voltmax: float, pressuremin: float, pressuremax: float) -> None:
+        return (pressureinput - pressuremin) * ((voltmax - voltmin) / (pressuremax - pressuremin)) + voltmin
+
 
     def close(self) -> None:
         """close all the solonoids"""
-        self.fillSolonoid.set(Relay.Value.kOff)
-        self.launchSolonoid.set(Relay.Value.kOn)
+        self.fillSolonoid.set(False)
+        self.launchSolonoid.set(0.0)
+        print(self.map(self.pressure.getVoltage(), constants.kVoltageOutMin,  constants.kVoltageOutMax, constants.kPressureInMin, constants.kPressureInMax))
         # print("CLOSING")
 
     def fill(self) -> None:
         """begins filling staging tank"""
         # self.launchSolonoid.set(
-        #     False
+        #     Relay.Value.kOff
         # )  #ensure air doesnt just flow out the end without being stored
-        self.fillSolonoid.set(Relay.Value.kOff if self.fillSolonoid.get() ==
-                              Relay.Value.kOn else Relay.Value.kOn)
+        self.launchSolonoid.set(0.0)
+        self.fillSolonoid.set(True)
         print(self.fillSolonoid.get())
         print("FILLING")
 
     def launch(self) -> None:
-        self.launchSolonoid.set(Relay.Value.kOff if self.launchSolonoid.get(
-        ) == Relay.Value.kOn else Relay.Value.kOn)
+        self.fillSolonoid.set(False)
+        self.launchSolonoid.set(1.0)
         print(self.launchSolonoid.get())

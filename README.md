@@ -20,11 +20,13 @@ VS Code is reccomended but not strictly required
 alternative
 [Neovim](https://neovim.io)
 
-### the following are only required in order to run on real hardware
+### the following is only required in order to run on real hardware
 
 #### FRC Game Tools
 
 [FRC Game Tools](https://www.ni.com/en-us/support/downloads/drivers/download.frc-game-tools.html#369633)
+
+### these are only for special setup things
 
 #### FRC Radio Configuration Utility
 

@@ -20,7 +20,7 @@ from wpimath.kinematics import (
 from enum import Enum, auto
 from typing import Tuple
 import constants
-from networktables import NetworkTables
+
 
 class SwerveModule:
     def __init__(self, name: str) -> None:

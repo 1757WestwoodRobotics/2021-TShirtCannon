@@ -31,7 +31,6 @@ from subsystems.drivesubsystem import DriveSubsystem
 from operatorinterface import OperatorInterface
 
 from networktables import NetworkTables
-
 from commands.targetdrive import TargetDrive
 
 class RobotContainer:
@@ -103,6 +102,9 @@ class RobotContainer:
         self.light.setDefaultCommand(
             RelayControl(self.light, self.operatorInterface.lightControl))
 
+        self.horn.setDefaultCommand(
+            HornHonk(self.horn, self.operatorInterface.hornControl))
+
     def configureButtonBindings(self):
         """
         Use this method to define your button->command mappings. Buttons can be created by
@@ -147,12 +149,8 @@ class RobotContainer:
                     BlinkLight(self.light, 1, 100)))
 
         commands2.button.JoystickButton(
-            *self.operatorInterface.hornControl).whileHeld(HornHonk(self.horn))
-
-        commands2.button.JoystickButton(
             *self.operatorInterface.trackControl).whileHeld(
-                TargetDrive(self.drive, NetworkTables.getTable("limelight"), self.camera)
-            )
+                TargetDrive(self.drive, NetworkTables.getTable("limelight"), self.camera))
         # commands2.button.JoystickButton(
         #     *self.operatorInterface.honkControl
         # ).whileHeld(HornHonk(self.light2))

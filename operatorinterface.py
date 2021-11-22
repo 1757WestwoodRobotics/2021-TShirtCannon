@@ -1,11 +1,11 @@
 from os import path
-from wpilib import Joystick, XboxController, RobotBase
-from wpilib.interfaces import GenericHID
+from wpilib import Joystick, RobotBase
 
 import typing
 import json
 
 import constants
+from subsystems.cannonsubsystem import CannonSubsystem
 
 AnalogInput = typing.Callable[[], float]
 
@@ -44,6 +44,11 @@ class CameraControl:
     def __init__(self, leftRight: AnalogInput, upDown: AnalogInput):
         self.leftRight = leftRight
         self.upDown = upDown
+
+
+class HornControl:
+    def __init__(self, amount: AnalogInput) -> None:
+        self.amount = amount
 
 
 class HolonomicInput:
@@ -132,10 +137,25 @@ class OperatorInterface:
 
         self.lightControl = Abs(lambda: self.driveController.getRawAxis(
             driveControls["lightControl"]
+<<<<<<< HEAD
             if controlScheme["lightsControlledByCamera"] else camControls[
                 "light"]))  # control for the lights (trigger axis by default)
 
         self.hornControl = (self.driveController, driveControls["horn"])
+=======
+            if not controlScheme["lightsControlledByCamera"] else camControls[
+                "light"]))  # control for the lights (trigger axis by default)
+
+        #self.hornControl = (self.driveController, driveControls["horn"]) This is reg button version
+
+        if controlScheme["camera"] == "XBOX_CAMERA":
+            self.hornControl = Deadband(
+                lambda: self.cameraController.getRawAxis(camControls["horn"]), constants.kXboxJoystickDeadband)
+        elif controlScheme["camera"] == "PLAYSTATION_CAMERA":
+            self.hornControl = Deadband(
+                lambda: CannonSubsystem.map(self.cameraController.getRawAxis(camControls["horn"]), -1, 1, 0, 1),
+                constants.kXboxJoystickDeadband)
+>>>>>>> 4c4fa1f751d5a0fce404013934471e12512165c2
 
         self.chassisControls = HolonomicInput(  # drive controls, allows for any directional movement and rotation
             Invert(  # forwards / backwards

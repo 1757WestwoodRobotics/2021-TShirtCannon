@@ -303,8 +303,7 @@ kHornControllerDeviceID = 60
 kBackLightControllerDeviceID = 62
 
 # T Shirt Cannon Pnumaticr
-kPCMCannonCanID = 61
-kCannonLaunchPCMID = 0
+kPCMCannonCanID = 1
 """id of the specisic port on the PCM
 launch goes between staging load and cannon output"""
 kCannonFillPCMID = 5
@@ -312,5 +311,17 @@ kCannonFillPCMID = 5
 fill goes between 120psi tank and small tank"""
 
 # cannon but in spike mode
+<<<<<<< HEAD
 kCannonLaunchSpikePWMID = 1
 kCannonFillSpikePWMID = 2
+=======
+kCannonLaunchVictorDeviceID = 61
+
+kCannonPressureAnalogInput = 0
+
+# Main air tank pressure sensor values
+kVoltageOutMin = 0.0
+kVoltageOutMax = 4.5
+kPressureInMin = 0
+kPressureInMax = 200
+>>>>>>> 4c4fa1f751d5a0fce404013934471e12512165c2

@@ -1,4 +1,3 @@
-from ctre import ControlMode
 from subsystems.lightsubsystem import LightSubsystem
 import typing
 from commands2 import CommandBase

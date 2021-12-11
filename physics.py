@@ -9,7 +9,7 @@
 # of your robot code without too much extra effort.
 #
 
-import typing
+import typing, socket, threading, struct
 import wpilib
 from wpilib.simulation import EncoderSim, PWMSim, SimDeviceSim
 import wpimath.kinematics
@@ -185,6 +185,10 @@ class PhysicsEngine:
         self.gyroSim = SimDeviceSim("navX-Sensor[4]")
         self.gyroYaw = self.gyroSim.getDouble("Yaw")
 
+        threading.Thread(target=PhysicsEngine.vr_simulator,
+                         args=(self, ),
+                         daemon=True).start()
+
     def update_sim(self, now: float, tm_diff: float) -> None:
         """
         Called when the simulation parameters for the program need to be
@@ -203,3 +207,29 @@ class PhysicsEngine:
         self.driveSim.update(tm_diff, voltage)
 
         self.physics_controller.field.setRobotPose(self.driveSim.getPose())
+
+    def vr_simulator(self):
+
+        udpServer = socket.socket(family=socket.AF_INET,
+                                  type=socket.SOCK_DGRAM)
+        udpServer.bind(("127.0.0.1", 1757))
+
+        print("init server...")
+
+        def encode_data(dat: Pose2d) -> bytearray:
+            def hexdat(x: float):
+                y = hex(struct.unpack("<Q",
+                                      struct.pack("<d",
+                                                  x))[0]).replace("0x", "")
+                return y
+
+            return bytearray.fromhex(
+                hexdat(dat.X() + 0.01) + hexdat(dat.Y() + 0.01) +
+                hexdat(dat.rotation().degrees() + 0.01))
+
+        while True:
+            (msg, addr) = udpServer.recvfrom(1024)
+
+            udpServer.sendto(
+                encode_data(self.physics_controller.field.getRobotPose()),
+                addr)

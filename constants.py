@@ -220,7 +220,7 @@ kConfigurationTimeoutLimit = int(5 * kMillisecondsPerSecond)
 """milliseconds"""
 
 kDrivePIDSlot = 0
-kDrivePGain = 0.02
+kDrivePGain = 0.12
 kDriveIGain = 0.0
 kDriveDGain = 0.0
 
@@ -278,6 +278,12 @@ kAutoDistanceThreshold = 6 * kMetersPerInch
 """meters"""
 
 kAutoDriveSpeedFactor = 0.5
+
+# drive control related values
+
+kRotationPGain = 0.8
+kRotationIGain = 0
+kRotationDGain = 0
 
 # Operator Interface
 kXboxControllerPort = 0

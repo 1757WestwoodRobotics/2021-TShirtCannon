@@ -6,7 +6,8 @@
   "XBOX_DRIVE_SIM": {
     "forwardsBackwards": 1,
     "sideToSide": 0,
-    "rotation": 3,
+    "rotationX": 3,
+    "rotationY": 4,
     "scaler": 2,
     "lightControl": 5,
 
@@ -24,7 +25,8 @@
   "XBOX_DRIVE_DRIVERSTATION": {
     "forwardsBackwards": 1,
     "sideToSide": 0,
-    "rotation": 3,
+    "rotationX": 3,
+    "rotationY": 4,
     "scaler": 2,
     "lightControl": 5,
 

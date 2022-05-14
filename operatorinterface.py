@@ -63,11 +63,13 @@ class HolonomicInput:
         self,
         forwardsBackwards: AnalogInput,
         sideToSide: AnalogInput,
-        rotation: AnalogInput,
+        rotationX: AnalogInput,
+        rotationY: AnalogInput,
     ) -> None:
         self.forwardsBackwards = forwardsBackwards
         self.sideToSide = sideToSide
-        self.rotation = rotation
+        self.rotationX = rotationX
+        self.rotationY = rotationY
 
 
 class OperatorInterface:
@@ -197,8 +199,15 @@ class OperatorInterface:
                 )
             ),
             Invert(
-                Deadband(  # rotational movement
-                    lambda: self.driveController.getRawAxis(driveControls["rotation"])
+                Deadband(  # rotational X movement
+                    lambda: self.driveController.getRawAxis(driveControls["rotationX"])
+                    * self.scaler(),
+                    constants.kXboxJoystickDeadband,
+                )
+            ),
+            Invert(
+                Deadband(  # rotational X movement
+                    lambda: self.driveController.getRawAxis(driveControls["rotationY"])
                     * self.scaler(),
                     constants.kXboxJoystickDeadband,
                 )

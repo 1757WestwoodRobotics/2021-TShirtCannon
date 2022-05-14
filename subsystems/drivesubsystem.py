@@ -20,6 +20,7 @@ from wpimath.kinematics import (
 from enum import Enum, auto
 from typing import Tuple
 import constants
+from util.convenietmath import optimizeAngle
 
 
 class SwerveModule:
@@ -44,6 +45,9 @@ class SwerveModule:
     def reset(self) -> None:
         raise NotImplementedError("Must be implemented by subclass")
 
+    def optimizedAngle(self, targetAngle: Rotation2d) -> Rotation2d:
+        return optimizeAngle(self.getSwerveAngle(), targetAngle)
+
     def getState(self) -> SwerveModuleState:
         return SwerveModuleState(
             self.getWheelLinearVelocity(),
@@ -52,9 +56,13 @@ class SwerveModule:
 
     def applyState(self, state: SwerveModuleState) -> None:
         optimizedState = SwerveModuleState.optimize(state, self.getSwerveAngle())
-        # optimizedState = state
+
         self.setWheelLinearVelocityTarget(optimizedState.speed)
-        self.setSwerveAngleTarget(optimizedState.angle)
+        if (
+            abs(optimizedState.speed) >= constants.kMinWheelLinearVelocity
+        ):  # prevent unneccisary movement for what would otherwise not move the robot
+            optimizedAngle = self.optimizedAngle(optimizedState.angle)
+            self.setSwerveAngleTarget(optimizedAngle)
 
 
 class PWMSwerveModule(SwerveModule):

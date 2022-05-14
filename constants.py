@@ -108,6 +108,9 @@ kMaxWheelAngularVelocity = kMaxMotorAngularVelocity / kDriveGearingRatio
 kMaxWheelLinearVelocity = kWheelDistancePerRadian * kMaxWheelAngularVelocity
 """meters / second"""
 
+kMinWheelLinearVelocity = 0.002
+"""meters / second"""
+
 kMaxSteerAngularVelocity = kMaxMotorAngularVelocity / kSteerGearingRatio
 """radians / second"""
 

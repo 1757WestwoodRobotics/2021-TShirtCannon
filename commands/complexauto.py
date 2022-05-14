@@ -10,6 +10,7 @@ class ComplexAuto(SequentialCommandGroup):
     """
     A complex auto command that drives forward, right, backwards, left.
     """
+
     def __init__(self, drive: DriveSubsystem):
         super().__init__(
             # Drive forward the specified distance

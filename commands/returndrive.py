@@ -6,9 +6,12 @@ from math import sqrt
 
 
 class ReturnDrive(CommandBase):
-    def __init__(self, drive: DriveSubsystem, scaler: typing.Callable[[],
-                                                                      float],
-                 rotation: typing.Callable[[], float]) -> None:
+    def __init__(
+        self,
+        drive: DriveSubsystem,
+        scaler: typing.Callable[[], float],
+        rotation: typing.Callable[[], float],
+    ) -> None:
         CommandBase.__init__(self)
         self.setName(__class__.__name__)
 

@@ -3,6 +3,7 @@ from commands2 import CommandBase
 from subsystems.drivesubsystem import DriveSubsystem
 from networktables import NetworkTables
 
+
 class DefaultDrive(CommandBase):
     def __init__(
         self,
@@ -20,7 +21,7 @@ class DefaultDrive(CommandBase):
         self.rotation = rotation
 
         self.addRequirements([self.drive])
-        self.setName(__class__.__name__)        
+        self.setName(__class__.__name__)
 
     def execute(self) -> None:
         NetworkTables.getTable("limelight").putNumber("ledMode", 1)

@@ -1,23 +1,30 @@
 from commands2 import SubsystemBase
 from ctre import WPI_VictorSPX
-from wpilib import Solenoid
-from wpilib import AnalogInput
+from wpilib import Solenoid, PneumaticsModuleType, AnalogInput
 import constants
 
 
-def map(pressureinput: float, voltmin: float, voltmax: float,
-        pressuremin: float, pressuremax: float) -> None:
+def map(
+    pressureinput: float,
+    voltmin: float,
+    voltmax: float,
+    pressuremin: float,
+    pressuremax: float,
+) -> None:
     return (pressureinput - pressuremin) * (
-        (voltmax - voltmin) / (pressuremax - pressuremin)) + voltmin
+        (voltmax - voltmin) / (pressuremax - pressuremin)
+    ) + voltmin
 
 
 class CannonSubsystem(SubsystemBase):
     def __init__(self) -> None:
         SubsystemBase.__init__(self)
-        self.launchSolonoid = WPI_VictorSPX(
-            constants.kCannonLaunchVictorDeviceID)
-        self.fillSolonoid = Solenoid(constants.kPCMCannonCanID,
-                                     constants.kCannonFillPCMID)
+        self.launchSolonoid = WPI_VictorSPX(constants.kCannonLaunchVictorDeviceID)
+        self.fillSolonoid = Solenoid(
+            constants.kPCMCannonCanID,
+            PneumaticsModuleType.CTREPCM,
+            constants.kCannonFillPCMID,
+        )
         self.pressure = AnalogInput(constants.kCannonPressureAnalogInput)
 
         self.fillSolonoid.set(False)
@@ -28,9 +35,14 @@ class CannonSubsystem(SubsystemBase):
         self.fillSolonoid.set(False)
         self.launchSolonoid.set(0.0)
         print(
-            map(self.pressure.getVoltage(), constants.kVoltageOutMin,
-                constants.kVoltageOutMax, constants.kPressureInMin,
-                constants.kPressureInMax))
+            map(
+                self.pressure.getVoltage(),
+                constants.kVoltageOutMin,
+                constants.kVoltageOutMax,
+                constants.kPressureInMin,
+                constants.kPressureInMax,
+            )
+        )
         # print("CLOSING")
 
     def fill(self) -> None:

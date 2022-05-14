@@ -13,8 +13,9 @@ class DriveDistance(CommandBase):
         X = auto()
         Y = auto()
 
-    def __init__(self, distance, speedFactor, axis: Axis,
-                 drive: DriveSubsystem) -> None:
+    def __init__(
+        self, distance, speedFactor, axis: Axis, drive: DriveSubsystem
+    ) -> None:
         CommandBase.__init__(self)
         self.setName(__class__.__name__)
 
@@ -36,16 +37,17 @@ class DriveDistance(CommandBase):
         self.updateDistanceToTarget()
         if self.axis is DriveDistance.Axis.X:
             self.drive.arcadeDriveWithFactors(
-                self.speedFactor, 0, 0,
-                DriveSubsystem.CoordinateMode.RobotRelative)
+                self.speedFactor, 0, 0, DriveSubsystem.CoordinateMode.RobotRelative
+            )
         elif self.axis is DriveDistance.Axis.Y:
             self.drive.arcadeDriveWithFactors(
-                0, self.speedFactor, 0,
-                DriveSubsystem.CoordinateMode.RobotRelative)
+                0, self.speedFactor, 0, DriveSubsystem.CoordinateMode.RobotRelative
+            )
 
     def end(self, interrupted: bool) -> None:
         self.drive.arcadeDriveWithFactors(
-            0, 0, 0, DriveSubsystem.CoordinateMode.RobotRelative)
+            0, 0, 0, DriveSubsystem.CoordinateMode.RobotRelative
+        )
 
     def isFinished(self) -> bool:
         return self.distanceToTarget < constants.kAutoDistanceThreshold
@@ -53,4 +55,5 @@ class DriveDistance(CommandBase):
     def updateDistanceToTarget(self) -> None:
         currentPose = self.drive.odometry.getPose()
         self.distanceToTarget = currentPose.translation().distance(
-            self.targetPose.translation())
+            self.targetPose.translation()
+        )

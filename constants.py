@@ -49,12 +49,13 @@ kSwerveModuleCenterToCenterSideDistance = 21.5 * kMetersPerInch
 """meters"""
 
 kHalfSwerveModuleCenterToCenterSideDistance = (
-    kSwerveModuleCenterToCenterSideDistance / 2)
+    kSwerveModuleCenterToCenterSideDistance / 2
+)
 """meters"""
 
 kSwerveModuleDistanceFromRobotCenter = pow(
-    pow(kHalfSwerveModuleCenterToCenterSideDistance, 2) +
-    pow(kHalfSwerveModuleCenterToCenterSideDistance, 2),
+    pow(kHalfSwerveModuleCenterToCenterSideDistance, 2)
+    + pow(kHalfSwerveModuleCenterToCenterSideDistance, 2),
     0.5,
 )
 """meters (c = (a^2 + b^2) ^ 0.5)"""
@@ -116,8 +117,9 @@ kMaxForwardLinearVelocity = kMaxWheelLinearVelocity
 kMaxSidewaysLinearVelocity = kMaxWheelLinearVelocity
 """meters / second"""
 
-kMaxRotationAngularVelocity = (kMaxWheelLinearVelocity /
-                               kSwerveModuleDistanceFromRobotCenter)
+kMaxRotationAngularVelocity = (
+    kMaxWheelLinearVelocity / kSwerveModuleDistanceFromRobotCenter
+)
 """radians / second (omega = v / r)"""
 
 kFrontLeftModuleName = "front_left"
@@ -195,12 +197,14 @@ kSteerEncoderPulsesPerRevolution = kTalonEncoderPulsesPerRevolution
 kSteerEncoderPulsesPerRadian = kSteerEncoderPulsesPerRevolution / kRadiansPerRevolution
 """pulses / radian"""
 
-kSwerveEncoderPulsesPerRevolution = (kSteerEncoderPulsesPerRevolution *
-                                     kSteerGearingRatio)
+kSwerveEncoderPulsesPerRevolution = (
+    kSteerEncoderPulsesPerRevolution * kSteerGearingRatio
+)
 """pulses / revolution"""
 
-kSwerveEncoderPulsesPerRadian = (kSwerveEncoderPulsesPerRevolution /
-                                 kRadiansPerRevolution)
+kSwerveEncoderPulsesPerRadian = (
+    kSwerveEncoderPulsesPerRevolution / kRadiansPerRevolution
+)
 """pulses / radian"""
 
 # CTRE

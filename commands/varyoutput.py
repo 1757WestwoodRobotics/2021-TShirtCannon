@@ -4,8 +4,9 @@ from commands2 import CommandBase
 
 
 class RelayControl(CommandBase):
-    def __init__(self, controller: LightSubsystem,
-                 controlPercent: typing.Callable[[], float]) -> None:
+    def __init__(
+        self, controller: LightSubsystem, controlPercent: typing.Callable[[], float]
+    ) -> None:
         CommandBase.__init__(self)
         self.control = controller
         self.controlPercentCommand = controlPercent

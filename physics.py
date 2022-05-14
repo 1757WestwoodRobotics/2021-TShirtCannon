@@ -46,16 +46,15 @@ class SwerveModuleSim:
         self.swerveEncoderSim = swerveEncoderSim
 
     def __str__(self) -> str:
-        return "pos: x={:.2f} y={:.2f}".format(self.position.X(),
-                                               self.position.Y())
+        return "pos: x={:.2f} y={:.2f}".format(self.position.X(), self.position.Y())
 
 
 class SwerveDriveSim:
-    def __init__(self, swerveModuleSims: typing.Tuple[SwerveModuleSim,
-                                                      ...]) -> None:
+    def __init__(self, swerveModuleSims: typing.Tuple[SwerveModuleSim, ...]) -> None:
         self.swerveModuleSims = swerveModuleSims
         self.kinematics = wpimath.kinematics.SwerveDrive4Kinematics(
-            *(module.position for module in swerveModuleSims))
+            *(module.position for module in swerveModuleSims)
+        )
         self.pose = Pose2d()
         self.outputs = None
 
@@ -71,28 +70,29 @@ class SwerveDriveSim:
         for module in self.swerveModuleSims:
             wheelVoltage = module.wheelMotorSim.getSpeed() * robotVoltage
             wheelAngularVelocity = (
-                wheelVoltage * module.wheelMotorType.Kv / module.
-                driveMotorGearing  # scale the wheel motor to get more reasonable wheel speeds
+                wheelVoltage
+                * module.wheelMotorType.Kv
+                / module.driveMotorGearing  # scale the wheel motor to get more reasonable wheel speeds
             )
-            wheelLinearVelocity = (wheelAngularVelocity *
-                                   constants.kWheelDistancePerRadian)
+            wheelLinearVelocity = (
+                wheelAngularVelocity * constants.kWheelDistancePerRadian
+            )
             module.wheelEncoderSim.setRate(wheelLinearVelocity)
 
             deltaWheelDistance = wheelLinearVelocity * deltaT
-            newWheelDistance = module.wheelEncoderSim.getDistance(
-            ) + deltaWheelDistance
+            newWheelDistance = module.wheelEncoderSim.getDistance() + deltaWheelDistance
             module.wheelEncoderSim.setDistance(newWheelDistance)
 
             swerveVoltage = module.swerveMotorSim.getSpeed() * robotVoltage
             swerveAngularVelocity = (
-                swerveVoltage * module.swerveMotorType.Kv / module.
-                steerMotorGearing  # scale the swerve motor to get more reasonable swerve speeds
+                swerveVoltage
+                * module.swerveMotorType.Kv
+                / module.steerMotorGearing  # scale the swerve motor to get more reasonable swerve speeds
             )
             module.swerveEncoderSim.setRate(swerveAngularVelocity)
 
             deltaSwerveAngle = swerveAngularVelocity * deltaT
-            newSwerveAngle = module.swerveEncoderSim.getDistance(
-            ) + deltaSwerveAngle
+            newSwerveAngle = module.swerveEncoderSim.getDistance() + deltaSwerveAngle
             module.swerveEncoderSim.setDistance(newSwerveAngle)
 
             state = wpimath.kinematics.SwerveModuleState(
@@ -116,6 +116,7 @@ class PhysicsEngine:
     """
     Simulates a drivetrain
     """
+
     def __init__(self, physics_controller: PhysicsInterface):
 
         self.physics_controller = physics_controller
@@ -128,10 +129,8 @@ class PhysicsEngine:
             PWMSim(constants.kFrontLeftSteerMotorSimPort),
             DCMotor.falcon500(),
             constants.kSteerGearingRatio,
-            EncoderSim.createForChannel(
-                constants.kFrontLeftDriveEncoderSimPorts[0]),
-            EncoderSim.createForChannel(
-                constants.kFrontLeftSteerEncoderSimPorts[0]),
+            EncoderSim.createForChannel(constants.kFrontLeftDriveEncoderSimPorts[0]),
+            EncoderSim.createForChannel(constants.kFrontLeftSteerEncoderSimPorts[0]),
         )
         self.frontRightModuleSim = SwerveModuleSim(
             constants.kFrontRightWheelPosition,
@@ -141,10 +140,8 @@ class PhysicsEngine:
             PWMSim(constants.kFrontRightSteerMotorSimPort),
             DCMotor.falcon500(),
             constants.kSteerGearingRatio,
-            EncoderSim.createForChannel(
-                constants.kFrontRightDriveEncoderSimPorts[0]),
-            EncoderSim.createForChannel(
-                constants.kFrontRightSteerEncoderSimPorts[0]),
+            EncoderSim.createForChannel(constants.kFrontRightDriveEncoderSimPorts[0]),
+            EncoderSim.createForChannel(constants.kFrontRightSteerEncoderSimPorts[0]),
         )
         self.backLeftModuleSim = SwerveModuleSim(
             constants.kBackLeftWheelPosition,
@@ -154,10 +151,8 @@ class PhysicsEngine:
             PWMSim(constants.kBackLeftSteerMotorSimPort),
             DCMotor.falcon500(),
             constants.kSteerGearingRatio,
-            EncoderSim.createForChannel(
-                constants.kBackLeftDriveEncoderSimPorts[0]),
-            EncoderSim.createForChannel(
-                constants.kBackLeftSteerEncoderSimPorts[0]),
+            EncoderSim.createForChannel(constants.kBackLeftDriveEncoderSimPorts[0]),
+            EncoderSim.createForChannel(constants.kBackLeftSteerEncoderSimPorts[0]),
         )
         self.backRightModuleSim = SwerveModuleSim(
             constants.kBackRightWheelPosition,
@@ -167,10 +162,8 @@ class PhysicsEngine:
             PWMSim(constants.kBackRightSteerMotorSimPort),
             DCMotor.falcon500(),
             constants.kSteerGearingRatio,
-            EncoderSim.createForChannel(
-                constants.kBackRightDriveEncoderSimPorts[0]),
-            EncoderSim.createForChannel(
-                constants.kBackRightSteerEncoderSimPorts[0]),
+            EncoderSim.createForChannel(constants.kBackRightDriveEncoderSimPorts[0]),
+            EncoderSim.createForChannel(constants.kBackRightSteerEncoderSimPorts[0]),
         )
 
         self.swerveModuleSims = [

@@ -5,9 +5,12 @@ from subsystems.cameracontroller import CameraSubsystem
 
 
 class RotateCamera(CommandBase):
-    def __init__(self, camera: CameraSubsystem,
-                 leftRight: typing.Callable[[], float],
-                 upDown: typing.Callable[[], float]) -> None:
+    def __init__(
+        self,
+        camera: CameraSubsystem,
+        leftRight: typing.Callable[[], float],
+        upDown: typing.Callable[[], float],
+    ) -> None:
         CommandBase.__init__(self)
         self.setName(__class__.__name__)
 

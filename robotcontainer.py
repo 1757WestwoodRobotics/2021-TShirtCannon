@@ -1,4 +1,5 @@
 from wpilib import Compressor
+from wpilib._wpilib import PneumaticsModuleType
 from commands.blinklight import BlinkLight
 from commands2 import ParallelCommandGroup
 from commands.hornhonk import HornHonk
@@ -32,7 +33,6 @@ from subsystems.drivesubsystem import DriveSubsystem
 from operatorinterface import OperatorInterface
 
 
-
 class RobotContainer:
     """
     This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,6 +40,7 @@ class RobotContainer:
     periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
     subsystems, commands, and button mappings) should be declared here.
     """
+
     def __init__(self) -> None:
 
         # The operator interface (driver controls)
@@ -52,8 +53,10 @@ class RobotContainer:
         self.light = LightSubsystem()
         self.horn = HornSubsystem()
 
-        #compressor
-        self.compressor = Compressor(constants.kPCMCannonCanID)
+        # compressor
+        self.compressor = Compressor(
+            constants.kPCMCannonCanID, PneumaticsModuleType.CTREPCM
+        )
 
         # horn
         # self.light = wpilib.(constants.kHornPWMPinLocation)
@@ -91,20 +94,26 @@ class RobotContainer:
                 self.operatorInterface.chassisControls.forwardsBackwards,
                 self.operatorInterface.chassisControls.sideToSide,
                 self.operatorInterface.chassisControls.rotation,
-            ))
+            )
+        )
 
         self.camera.setDefaultCommand(
-            RotateCamera(self.camera,
-                         self.operatorInterface.cameraControls.leftRight,
-                         self.operatorInterface.cameraControls.upDown))
+            RotateCamera(
+                self.camera,
+                self.operatorInterface.cameraControls.leftRight,
+                self.operatorInterface.cameraControls.upDown,
+            )
+        )
 
         # self.cannon.setDefaultCommand(
         #     SetCannon(self.cannon, SetCannon.Mode.Off))
         self.light.setDefaultCommand(
-            RelayControl(self.light, self.operatorInterface.lightControl))
+            RelayControl(self.light, self.operatorInterface.lightControl)
+        )
 
         self.horn.setDefaultCommand(
-            HornHonk(self.horn, self.operatorInterface.hornControl))
+            HornHonk(self.horn, self.operatorInterface.hornControl)
+        )
 
     def configureButtonBindings(self):
         """
@@ -113,48 +122,50 @@ class RobotContainer:
         and then passing it to a JoystickButton.
         """
         commands2.button.JoystickButton(
-            *self.operatorInterface.coordinateModeControl).whileHeld(
-                FieldRelativeDrive(
-                    self.drive,
-                    self.operatorInterface.chassisControls.forwardsBackwards,
-                    self.operatorInterface.chassisControls.sideToSide,
-                    self.operatorInterface.chassisControls.rotation,
-                ))
-
-        commands2.button.JoystickButton(
-            *self.operatorInterface.resetSwerveControl).whenPressed(
-                ResetDrive(self.drive))
-
-        commands2.button.JoystickButton(
-            *self.operatorInterface.fillCannon).whenPressed(
-                SetCannon(self.cannon, SetCannon.Mode.Fill))
-
-        commands2.button.JoystickButton(
-            *self.operatorInterface.launchCannon).whenPressed(
-                SetCannon(self.cannon, SetCannon.Mode.Launch))
-
-        commands2.button.POVButton(
-            *self.operatorInterface.returnPositionInput).whenPressed(
-                SetReturn(self.drive))
-
-        commands2.button.JoystickButton(
-            *self.operatorInterface.closeValves).whenPressed(
-                SetCannon(self.cannon, SetCannon.Mode.Off))
-
-        commands2.button.POVButton(
-            *self.operatorInterface.returnModeControl).whileHeld(
-                ParallelCommandGroup(
-                    ReturnDrive(
-                        self.drive, self.operatorInterface.scaler,
-                        self.operatorInterface.chassisControls.rotation),
-                    BlinkLight(self.light, 1, 100)))
-
-        commands2.button.POVButton(
-            *self.operatorInterface.pulseTheLights).toggleWhenPressed(
-                ParallelCommandGroup(
-                    PulseLight(self.light, 500, False)
-                )
+            *self.operatorInterface.coordinateModeControl
+        ).whileHeld(
+            FieldRelativeDrive(
+                self.drive,
+                self.operatorInterface.chassisControls.forwardsBackwards,
+                self.operatorInterface.chassisControls.sideToSide,
+                self.operatorInterface.chassisControls.rotation,
             )
+        )
+
+        commands2.button.JoystickButton(
+            *self.operatorInterface.resetSwerveControl
+        ).whenPressed(ResetDrive(self.drive))
+
+        commands2.button.JoystickButton(*self.operatorInterface.fillCannon).whenPressed(
+            SetCannon(self.cannon, SetCannon.Mode.Fill)
+        )
+
+        commands2.button.JoystickButton(
+            *self.operatorInterface.launchCannon
+        ).whenPressed(SetCannon(self.cannon, SetCannon.Mode.Launch))
+
+        commands2.button.POVButton(
+            *self.operatorInterface.returnPositionInput
+        ).whenPressed(SetReturn(self.drive))
+
+        commands2.button.JoystickButton(
+            *self.operatorInterface.closeValves
+        ).whenPressed(SetCannon(self.cannon, SetCannon.Mode.Off))
+
+        commands2.button.POVButton(*self.operatorInterface.returnModeControl).whileHeld(
+            ParallelCommandGroup(
+                ReturnDrive(
+                    self.drive,
+                    self.operatorInterface.scaler,
+                    self.operatorInterface.chassisControls.rotation,
+                ),
+                BlinkLight(self.light, 1, 100),
+            )
+        )
+
+        commands2.button.POVButton(
+            *self.operatorInterface.pulseTheLights
+        ).toggleWhenPressed(ParallelCommandGroup(PulseLight(self.light, 500, False)))
 
         # commands2.button.JoystickButton(
         #     *self.operatorInterface.honkControl

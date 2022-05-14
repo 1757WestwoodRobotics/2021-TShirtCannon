@@ -4,8 +4,7 @@ from commands2 import CommandBase
 
 
 class HornHonk(CommandBase):
-    def __init__(self, horn: HornSubsystem,
-                 amount: typing.Callable[[], float]) -> None:
+    def __init__(self, horn: HornSubsystem, amount: typing.Callable[[], float]) -> None:
         CommandBase.__init__(self)
         self.horn = horn
         self.hornStrength = amount

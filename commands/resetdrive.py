@@ -13,7 +13,8 @@ class ResetDrive(CommandBase):
     def initialize(self) -> None:
         print("Command: {}".format(self.getName()))
         self.drive.returnPos = self.drive.shiftPoint(
-            self.drive.returnPos, self.drive.odometry.getPose())
+            self.drive.returnPos, self.drive.odometry.getPose()
+        )
 
     def execute(self) -> None:
         self.drive.resetSwerveModules()

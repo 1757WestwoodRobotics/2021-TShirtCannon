@@ -134,3 +134,6 @@ dmypy.json
 
 #virtual environment
 .venv/
+simgui-ds.json
+simgui-window.json
+simgui.json

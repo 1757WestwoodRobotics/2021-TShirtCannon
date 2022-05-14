@@ -19,11 +19,10 @@ class SetCannon(CommandBase):
         self.funcs = {
             SetCannon.Mode.Off: self.cannon.close,
             SetCannon.Mode.Fill: self.cannon.fill,
-            SetCannon.Mode.Launch: self.cannon.launch
+            SetCannon.Mode.Launch: self.cannon.launch,
         }
 
         self.isFinished = lambda: True
 
     def execute(self) -> None:
         self.funcs[self.mode]()
-

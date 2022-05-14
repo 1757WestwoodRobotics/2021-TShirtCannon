@@ -1,6 +1,6 @@
 {
-  "drive": "PLAYSTATION_DRIVE",
-  "camera": "PLAYSTATION_CAMERA",
+  "drive": "XBOX_DRIVE",
+  "camera": "XBOX_CAMERA",
   "lightsControlledByCamera": true,
 
   "XBOX_DRIVE_SIM": {

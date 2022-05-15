@@ -264,6 +264,10 @@ kBackLeftAbsoluteEncoderOffset = 19.424
 kBackRightAbsoluteEncoderOffset = 142.998
 """degrees"""
 
+kRobotPoseArrayKeys = "RobotPoseArray"
+kCannonStateKey = "CannonState"
+kPressureKey = "CannonPressure"
+
 # Autonomous
 kAutoDriveDistance = 3 * kWheelCircumference
 """meters"""

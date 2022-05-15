@@ -1,6 +1,6 @@
 from math import cos, sin
 from commands2 import SubsystemBase
-from wpilib import Encoder, PWMVictorSPX, RobotBase, Timer
+from wpilib import Encoder, PWMVictorSPX, RobotBase, Timer, SmartDashboard
 from ctre import (
     AbsoluteSensorRange,
     CANCoder,
@@ -470,6 +470,14 @@ class DriveSubsystem(SubsystemBase):
             self.frontRightModule.getState(),
             self.backLeftModule.getState(),
             self.backRightModule.getState(),
+        )
+
+        robotPose = self.odometry.getPose()
+
+        robotPoseArray = [robotPose.X(), robotPose.Y(), robotPose.rotation().radians()]
+
+        SmartDashboard.putNumberArray(
+            constants.kRobotPoseArrayKeys, robotPoseArray
         )
 
         if self.printTimer.hasPeriodPassed(constants.kPrintPeriod):

@@ -22,6 +22,8 @@ import constants
 from pyfrc.physics.core import PhysicsInterface
 
 
+
+
 class SwerveModuleSim:
     def __init__(
         self,
@@ -177,6 +179,7 @@ class PhysicsEngine:
 
         self.gyroSim = SimDeviceSim("navX-Sensor[4]")
         self.gyroYaw = self.gyroSim.getDouble("Yaw")
+
 
     def update_sim(self, now: float, tm_diff: float) -> None:
         """

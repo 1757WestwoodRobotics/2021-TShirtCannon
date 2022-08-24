@@ -17,6 +17,7 @@ from wpimath.kinematics import (
     SwerveDrive4Kinematics,
     SwerveDrive4Odometry,
 )
+from wpimath.filter import SlewRateLimiter
 from enum import Enum, auto
 from typing import Tuple
 import constants
@@ -342,6 +343,9 @@ class DriveSubsystem(SubsystemBase):
         SubsystemBase.__init__(self)
         self.setName(__class__.__name__)
 
+        self.xVelDamp = SlewRateLimiter(4.2)
+        self.yVelDamp = SlewRateLimiter(4.2)
+
         if RobotBase.isReal():
             self.frontLeftModule = CTRESwerveModule(
                 constants.kFrontLeftModuleName,
@@ -534,7 +538,13 @@ class DriveSubsystem(SubsystemBase):
                 chassisSpeeds.omega,
                 self.odometry.getPose().rotation(),
             )
-        moduleStates = self.kinematics.toSwerveModuleStates(robotChassisSpeeds)
+
+        dampedSpeeds = ChassisSpeeds(
+            self.xVelDamp.calculate(robotChassisSpeeds.vx),
+            self.yVelDamp.calculate(robotChassisSpeeds.vy),
+            robotChassisSpeeds.omega,
+        )
+        moduleStates = self.kinematics.toSwerveModuleStates(dampedSpeeds)
         (
             frontLeftState,
             frontRightState,

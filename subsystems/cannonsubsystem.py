@@ -21,9 +21,9 @@ def map_range(
 
 class CannonSubsystem(SubsystemBase):
     class State(Enum):
-        Closed = 0
-        Filling = 1
-        Launching = 2
+        Closed = auto()
+        Filling = auto()
+        Launching = auto()
 
     def periodic(self) -> None:
         SmartDashboard.putNumber(constants.kCannonStateKey, self.state.value)

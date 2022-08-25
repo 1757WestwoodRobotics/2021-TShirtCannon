@@ -2,19 +2,21 @@ from enum import Enum, auto
 from commands2 import SubsystemBase
 from ctre import WPI_VictorSPX
 from wpilib import Solenoid, PneumaticsModuleType, AnalogInput, SmartDashboard
-import constants
+import constants, typing
 
 
-def map(
-    pressureinput: float,
-    voltmin: float,
-    voltmax: float,
-    pressuremin: float,
-    pressuremax: float,
-) -> None:
-    return (pressureinput - pressuremin) * (
-        (voltmax - voltmin) / (pressuremax - pressuremin)
-    ) + voltmin
+number = typing.Union[float, int]
+
+def map_range(
+    value: number,
+    inputMin: number,
+    inputMax: number,
+    outputMin: number,
+    outputMax: number,
+):
+    return (value - inputMin) * (outputMax - outputMin) / (
+        inputMax - inputMin
+    ) + outputMin
 
 
 class CannonSubsystem(SubsystemBase):
@@ -42,7 +44,7 @@ class CannonSubsystem(SubsystemBase):
         self.state = CannonSubsystem.State.Closed
 
     def getPressure(self) -> float:
-        return map(
+        return map_range(
             self.pressure.getVoltage(),
             constants.kVoltageOutMin,
             constants.kVoltageOutMax,

@@ -15,6 +15,7 @@ Swerve Module Layout:
 import math
 from wpimath.geometry import Translation2d
 from wpimath.system.plant import DCMotor
+from foxglove import FoxglovePublisher
 
 # Basic units
 kCentimetersPerInch = 2.54
@@ -337,3 +338,15 @@ kVoltageOutMin = 0.0
 kVoltageOutMax = 4.5
 kPressureInMin = 0
 kPressureInMax = 200
+
+#power stuff
+kRobotPowerChannelsKey = "powerDistribution"
+kRobotVoltageChannelKey = "powerVoltage"
+
+foxglove_sub_topics = {
+    "RobotPose": (kRobotPoseArrayKeys, FoxglovePublisher.FoxgloveType.Pose2d),
+    "CannonState": (kCannonStateKey, FoxglovePublisher.FoxgloveType.Number),
+    "PowerChannels": (kRobotPowerChannelsKey, FoxglovePublisher.FoxgloveType.NumberArray),
+    "Voltage": (kRobotVoltageChannelKey, FoxglovePublisher.FoxgloveType.Number),
+    "Pressure": (kPressureKey, FoxglovePublisher.FoxgloveType.Number)
+}

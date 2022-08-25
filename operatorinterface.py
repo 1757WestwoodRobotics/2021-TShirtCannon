@@ -5,7 +5,7 @@ import typing
 import json
 
 import constants
-from subsystems.cannonsubsystem import map
+from subsystems.cannonsubsystem import map_range
 
 AnalogInput = typing.Callable[[], float]
 
@@ -174,7 +174,7 @@ class OperatorInterface:
             )
         elif controlScheme["camera"] == "PLAYSTATION_CAMERA":
             self.hornControl = Deadband(
-                lambda: map(
+                lambda: map_range(
                     self.cameraController.getRawAxis(camControls["horn"]), -1, 1, 0, 1
                 ),
                 constants.kXboxJoystickDeadband,

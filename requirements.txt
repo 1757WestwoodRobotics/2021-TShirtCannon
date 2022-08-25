@@ -2,3 +2,4 @@
 robotpy[all]
 pyyaml
 pylint
+foxglove_websocket

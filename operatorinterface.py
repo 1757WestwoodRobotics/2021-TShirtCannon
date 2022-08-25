@@ -205,7 +205,7 @@ class OperatorInterface:
                 )
             ),
             Invert(
-                Deadband(  # rotational X movement
+                Deadband(  # rotational Y movement
                     lambda: self.driveController.getRawAxis(driveControls["rotationY"])
                     * self.scaler(),
                     constants.kXboxJoystickDeadband,

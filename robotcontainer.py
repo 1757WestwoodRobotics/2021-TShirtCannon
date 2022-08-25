@@ -1,5 +1,4 @@
-from wpilib import Compressor
-from wpilib._wpilib import PneumaticsModuleType
+from wpilib import Compressor, PneumaticsModuleType
 from commands.absoluterelativedrive import AbsoluteRelativeDrive
 from commands.blinklight import BlinkLight
 from commands2 import ParallelCommandGroup

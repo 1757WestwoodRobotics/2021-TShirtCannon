@@ -2,7 +2,7 @@ import asyncio, json, time
 from enum import Enum, auto
 from typing import Tuple
 
-import wpilib, cv2, logging, queue
+import wpilib, logging, queue
 from logging.handlers import QueueHandler
 
 
@@ -116,18 +116,6 @@ class FoxglovePublisher:
                             ),
                         }
                     )
-                elif type == FoxglovePublisher.FoxgloveType.VideoFeed:
-                    try:
-                        self.videoStreams[name] = cv2.VideoCapture(val[0])
-                        self.topic_map[name] = await server.add_channel(
-                            {
-                                "topic": f"/{name}",
-                                "encoding": "json",
-                                "schemaName": "foxglove.CompressedImage",
-                            }
-                        )
-                    except e:
-                        print(e)
 
             while True:
                 await asyncio.sleep(0.02)
@@ -177,23 +165,6 @@ class FoxglovePublisher:
                                             "w": rot[3],
                                         },
                                     },
-                                }
-                            ).encode("utf8"),
-                        )
-                    elif type == FoxglovePublisher.FoxgloveType.VideoFeed:
-                        _, frame = self.videoStreams[name].read()
-                        _, imbuff = cv2.imencode(".jpg", frame)
-                        await server.send_message(
-                            self.topic_map[name],
-                            time.time_ns(),
-                            json.dumps(
-                                {
-                                    "timestamp": {
-                                        "sec": int(time.time()),
-                                        "nsec": time.time_ns() % 1e9,
-                                    },
-                                    "data": imbuff.tolist(),
-                                    "format": "jpeg"
                                 }
                             ).encode("utf8"),
                         )

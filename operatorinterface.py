@@ -105,8 +105,7 @@ class OperatorInterface:
         )  # camera controller
 
         self.scaler = (
-            lambda: (self.driveController.getRawAxis(driveControls["scaler"]) - 1)
-            * -0.5
+            lambda: 0.3
         )  # motor scaler, used to decrease the velocity through a single control
 
         self.returnPositionInput = (

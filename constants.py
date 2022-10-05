@@ -24,6 +24,9 @@ kCentimetersPerInch = 2.54
 kCentimetersPerMeter = 100
 """centimeters / meter"""
 
+kSecondsPerMinute = 60
+"""seconds / minutes"""
+
 kMetersPerInch = kCentimetersPerInch / kCentimetersPerMeter
 """meters / inch"""
 

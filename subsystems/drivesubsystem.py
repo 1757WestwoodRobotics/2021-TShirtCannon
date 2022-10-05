@@ -549,38 +549,54 @@ class DriveSubsystem(SubsystemBase):
         self.yVelDamp = SlewRateLimiter(4.2)
 
         if RobotBase.isReal():
-            self.frontLeftModule = CTRESwerveModule(
+            self.frontLeftModule = REVSwerveModule(
                 constants.kFrontLeftModuleName,
-                WPI_TalonFX(constants.kFrontLeftDriveMotorId),
+                CANSparkMax(
+                    constants.kFrontLeftDriveMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kFrontLeftDriveInverted,
-                WPI_TalonFX(constants.kFrontLeftSteerMotorId),
+                CANSparkMax(
+                    constants.kFrontLeftSteerMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kFrontLeftSteerInverted,
                 CANCoder(constants.kFrontLeftSteerEncoderId),
                 constants.kFrontLeftAbsoluteEncoderOffset,
             )
-            self.frontRightModule = CTRESwerveModule(
+            self.frontRightModule = REVSwerveModule(
                 constants.kFrontRightModuleName,
-                WPI_TalonFX(constants.kFrontRightDriveMotorId),
+                CANSparkMax(
+                    constants.kFrontRightDriveMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kFrontRightDriveInverted,
-                WPI_TalonFX(constants.kFrontRightSteerMotorId),
+                CANSparkMax(
+                    constants.kFrontRightSteerMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kFrontRightSteerInverted,
                 CANCoder(constants.kFrontRightSteerEncoderId),
                 constants.kFrontRightAbsoluteEncoderOffset,
             )
-            self.backLeftModule = CTRESwerveModule(
+            self.backLeftModule = REVSwerveModule(
                 constants.kBackLeftModuleName,
-                WPI_TalonFX(constants.kBackLeftDriveMotorId),
+                CANSparkMax(
+                    constants.kBackLeftDriveMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kBackLeftDriveInverted,
-                WPI_TalonFX(constants.kBackLeftSteerMotorId),
+                CANSparkMax(
+                    constants.kBackLeftSteerMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kBackLeftSteerInverted,
                 CANCoder(constants.kBackLeftSteerEncoderId),
                 constants.kBackLeftAbsoluteEncoderOffset,
             )
-            self.backRightModule = CTRESwerveModule(
+            self.backRightModule = REVSwerveModule(
                 constants.kBackRightModuleName,
-                WPI_TalonFX(constants.kBackRightDriveMotorId),
+                CANSparkMax(
+                    constants.kBackRightDriveMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kBackRightDriveInverted,
-                WPI_TalonFX(constants.kBackRightSteerMotorId),
+                CANSparkMax(
+                    constants.kBackRightSteerMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kBackRightSteerInverted,
                 CANCoder(constants.kBackRightSteerEncoderId),
                 constants.kBackRightAbsoluteEncoderOffset,

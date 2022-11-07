@@ -53,7 +53,7 @@ class RobotContainer:
         self.cannon = CannonSubsystem()
         self.light = LightSubsystem()
         self.horn = HornSubsystem()
-        self.log = SystemLogSubsystem()
+        #self.log = SystemLogSubsystem()
 
         # compressor
         self.compressor = Compressor(

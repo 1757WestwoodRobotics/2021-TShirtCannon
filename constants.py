@@ -15,7 +15,7 @@ Swerve Module Layout:
 import math
 from wpimath.geometry import Translation2d
 from wpimath.system.plant import DCMotor
-from foxglove import FoxglovePublisher
+#from foxglove import FoxglovePublisher
 
 # Basic units
 kCentimetersPerInch = 2.54
@@ -103,7 +103,7 @@ kDriveGearingRatio = (48 / 16) * (16 / 28) * (60 / 15)
 kSteerGearingRatio = (32 / 15) * (60 / 10)
 """dimensionless"""
 
-kMaxMotorAngularVelocity = DCMotor.falcon500().freeSpeed
+kMaxMotorAngularVelocity = DCMotor.NEO().freeSpeed
 """radians / second"""
 
 kMaxWheelAngularVelocity = kMaxMotorAngularVelocity / kDriveGearingRatio
@@ -346,10 +346,10 @@ kPressureInMax = 200
 kRobotPowerChannelsKey = "powerDistribution"
 kRobotVoltageChannelKey = "powerVoltage"
 
-foxglove_sub_topics = {
-    "RobotPose": (kRobotPoseArrayKeys, FoxglovePublisher.FoxgloveType.Pose2d),
-    "CannonState": (kCannonStateKey, FoxglovePublisher.FoxgloveType.Number),
-    "PowerChannels": (kRobotPowerChannelsKey, FoxglovePublisher.FoxgloveType.NumberArray),
-    "Voltage": (kRobotVoltageChannelKey, FoxglovePublisher.FoxgloveType.Number),
-    "Pressure": (kPressureKey, FoxglovePublisher.FoxgloveType.Number)
-}
+# foxglove_sub_topics = {
+#     "RobotPose": (kRobotPoseArrayKeys, FoxglovePublisher.FoxgloveType.Pose2d),
+#     "CannonState": (kCannonStateKey, FoxglovePublisher.FoxgloveType.Number),
+#     "PowerChannels": (kRobotPowerChannelsKey, FoxglovePublisher.FoxgloveType.NumberArray),
+#     "Voltage": (kRobotVoltageChannelKey, FoxglovePublisher.FoxgloveType.Number),
+#     "Pressure": (kPressureKey, FoxglovePublisher.FoxgloveType.Number)
+# }

@@ -235,6 +235,20 @@ class REVSwerveModule(SwerveModule):
             ),
         ):
             return
+        if not revCheckError(
+            "config_PosConvert",
+            self.driveMotorEncover.setPositionConversionFactor(
+                constants.kSwerveMetersPerDriveEncoderRevolution
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_VelConvert",
+            self.driveMotorEncover.setVelocityConversionFactor(
+                constants.kSwerveDriveEncoderRPMperMPS
+            ),
+        ):
+            return
         print("   ... Done")
 
         print(
@@ -268,45 +282,45 @@ class REVSwerveModule(SwerveModule):
             ),
         ):
             return
+        if not revCheckError(
+            "config_PosConvert",
+            self.steerMotorEncoder.setPositionConversionFactor(
+                constants.kSwerveMotorDegreesPerEncoderRev
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_VelConvert",
+            self.steerMotorEncoder.setVelocityConversionFactor(
+                constants.kSwerveMotorDegreesPerEncoderRev / 60
+            ),
+        ):
+            return
         print("   ... Done")
 
+    # the following functions use helpful scaling done on the motor encoders to make the units nicer
     def getSwerveAngle(self) -> Rotation2d:
-        steerEncoderRotations = self.steerMotorEncoder.getPosition()
-        swerveAngle = steerEncoderRotations * constants.kRadiansPerRevolution
-        return Rotation2d(swerveAngle)
+        steerEncoderDegrees = self.steerMotorEncoder.getPosition()
+        return Rotation2d.fromDegrees(steerEncoderDegrees)
 
     def setSwerveAngle(self, swerveAngle: Rotation2d) -> None:
-        steerEncoderRotations = swerveAngle.radians() / constants.kRadiansPerRevolution
-        self.steerMotorEncoder.setPosition(steerEncoderRotations)
+        steerEncoderDegrees = swerveAngle.degrees()
+        self.steerMotorEncoder.setPosition(steerEncoderDegrees)
 
     def setSwerveAngleTarget(self, swerveAngleTarget: Rotation2d) -> None:
-        steerEncoderRotationsTarget = (
-            swerveAngleTarget.radians() * constants.kRadiansPerRevolution
-        )
+        steerAngleDegrees = swerveAngleTarget.degrees()
         self.steerMotorController.setReference(
-            steerEncoderRotationsTarget, CANSparkMax.ControlType.kPosition
+            steerAngleDegrees, CANSparkMax.ControlType.kPosition
         )
 
     def getWheelLinearVelocity(self) -> float:
-        driveEncoderRPM = self.driveMotorEncover.getVelocity()
-
-        wheelLinearVelocity = (
-            driveEncoderRPM
-            * constants.kWheelDistancePerRevolution
-            / constants.kSecondsPerMinute
-        )
         """meters / second"""
+        driveEncoderRPM = self.driveMotorEncover.getVelocity()
         return wheelLinearVelocity
 
     def setWheelLinearVelocityTarget(self, wheelLinearVelocityTarget: float) -> None:
-        driveEncoderRotationsPerMinute = (
-            wheelLinearVelocityTarget
-            / constants.kWheelDistancePerRevolution
-            * constants.kSecondsPerMinute
-        )
-        """rpm"""
         self.driveMotorController.setReference(
-            driveEncoderRotationsPerMinute, CANSparkMax.ControlType.kVelocity
+            wheelLinearVelocityTarget, CANSparkMax.ControlType.kVelocity
         )
 
     def reset(self) -> None:

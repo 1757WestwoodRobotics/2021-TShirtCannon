@@ -18,6 +18,5 @@ class SystemLogSubsystem(SubsystemBase):
         )
 
         SmartDashboard.putNumber(
-            constants.kRobotVoltageChannelKey,
-            self.pdh.getVoltage()
+            constants.kRobotVoltageChannelKey, self.pdh.getVoltage()
         )

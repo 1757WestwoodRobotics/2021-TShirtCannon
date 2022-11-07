@@ -7,6 +7,7 @@ import constants, typing
 
 number = typing.Union[float, int]
 
+
 def map_range(
     value: number,
     inputMin: number,

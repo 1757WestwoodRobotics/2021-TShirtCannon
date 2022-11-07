@@ -15,7 +15,6 @@ Swerve Module Layout:
 import math
 from wpimath.geometry import Translation2d
 from wpimath.system.plant import DCMotor
-from foxglove import FoxglovePublisher
 
 # Basic units
 kCentimetersPerInch = 2.54
@@ -214,12 +213,12 @@ kSwerveEncoderPulsesPerRadian = (
 )
 """pulses / radian"""
 
-# REV Modules 
+# REV Modules
 kSwerveMotorDegreesPerEncoderRev = kDegeersPerRevolution / kSteerGearingRatio
 """end degrees / motor revolution"""
 kSwerveMetersPerDriveEncoderRevolution = (kWheelDiameter * math.pi) / kDriveGearingRatio
 """drive meters / motor revolution"""
-# in one minutes, 1rpm encoder moves at kSwerveMotorDegreesPerEncoderRev, so in 1 second it travels at 1/60th 
+# in one minutes, 1rpm encoder moves at kSwerveMotorDegreesPerEncoderRev, so in 1 second it travels at 1/60th
 kSwerveDriveEncoderRPMperMPS = kSwerveMetersPerDriveEncoderRevolution / 60
 """motor rpm / wheel mps"""
 
@@ -351,14 +350,14 @@ kVoltageOutMax = 4.5
 kPressureInMin = 0
 kPressureInMax = 200
 
-#power stuff
+# power stuff
 kRobotPowerChannelsKey = "powerDistribution"
 kRobotVoltageChannelKey = "powerVoltage"
 
-foxglove_sub_topics = {
-    "RobotPose": (kRobotPoseArrayKeys, FoxglovePublisher.FoxgloveType.Pose2d),
-    "CannonState": (kCannonStateKey, FoxglovePublisher.FoxgloveType.Number),
-    "PowerChannels": (kRobotPowerChannelsKey, FoxglovePublisher.FoxgloveType.NumberArray),
-    "Voltage": (kRobotVoltageChannelKey, FoxglovePublisher.FoxgloveType.Number),
-    "Pressure": (kPressureKey, FoxglovePublisher.FoxgloveType.Number)
-}
+# foxglove_sub_topics = {
+#     "RobotPose": (kRobotPoseArrayKeys, FoxglovePublisher.FoxgloveType.Pose2d),
+#     "CannonState": (kCannonStateKey, FoxglovePublisher.FoxgloveType.Number),
+#     "PowerChannels": (kRobotPowerChannelsKey, FoxglovePublisher.FoxgloveType.NumberArray),
+#     "Voltage": (kRobotVoltageChannelKey, FoxglovePublisher.FoxgloveType.Number),
+#     "Pressure": (kPressureKey, FoxglovePublisher.FoxgloveType.Number)
+# }

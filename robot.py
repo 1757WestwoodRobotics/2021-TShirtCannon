@@ -60,7 +60,6 @@ class MentorBot(commands2.TimedCommandRobot):
         # Cancels all running commands at the start of test mode
         commands2.CommandScheduler.getInstance().cancelAll()
 
+
 if __name__ == "__main__":
     wpilib.run(MentorBot)
-    #foxglove_pub = FoxglovePublisher(**constants.foxglove_sub_topics)
-    #foxglove_pub.run_bot(MentorBot)

@@ -15,7 +15,6 @@ Swerve Module Layout:
 import math
 from wpimath.geometry import Translation2d
 from wpimath.system.plant import DCMotor
-#from foxglove import FoxglovePublisher
 
 # Basic units
 kCentimetersPerInch = 2.54
@@ -214,6 +213,15 @@ kSwerveEncoderPulsesPerRadian = (
 )
 """pulses / radian"""
 
+# REV Modules
+kSwerveMotorDegreesPerEncoderRev = kDegeersPerRevolution / kSteerGearingRatio
+"""end degrees / motor revolution"""
+kSwerveMetersPerDriveEncoderRevolution = (kWheelDiameter * math.pi) / kDriveGearingRatio
+"""drive meters / motor revolution"""
+# in one minutes, 1rpm encoder moves at kSwerveMotorDegreesPerEncoderRev, so in 1 second it travels at 1/60th
+kSwerveDriveEncoderRPMperMPS = kSwerveMetersPerDriveEncoderRevolution / 60
+"""motor rpm / wheel mps"""
+
 # CTRE
 k100MillisecondsPerSecond = 10 / 1  # there are 10 groups of 100 milliseconds per second
 """100 milliseconds / second
@@ -342,7 +350,7 @@ kVoltageOutMax = 4.5
 kPressureInMin = 0
 kPressureInMax = 200
 
-#power stuff
+# power stuff
 kRobotPowerChannelsKey = "powerDistribution"
 kRobotVoltageChannelKey = "powerVoltage"
 

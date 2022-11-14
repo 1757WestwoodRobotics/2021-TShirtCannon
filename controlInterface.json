@@ -25,8 +25,8 @@
   "XBOX_DRIVE_DRIVERSTATION": {
     "forwardsBackwards": 1,
     "sideToSide": 0,
-    "rotationX": 3,
-    "rotationY": 4,
+    "rotationX": 4,
+    "rotationY": 5,
     "scaler": 2,
     "lightControl": 5,
 

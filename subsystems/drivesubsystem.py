@@ -316,9 +316,10 @@ class REVSwerveModule(SwerveModule):
     def getWheelLinearVelocity(self) -> float:
         """meters / second"""
         driveEncoderRPM = self.driveMotorEncover.getVelocity()
-        return wheelLinearVelocity
+        return driveEncoderRPM
 
     def setWheelLinearVelocityTarget(self, wheelLinearVelocityTarget: float) -> None:
+        pass
         self.driveMotorController.setReference(
             wheelLinearVelocityTarget, CANSparkMax.ControlType.kVelocity
         )
@@ -783,12 +784,7 @@ class DriveSubsystem(SubsystemBase):
                 self.odometry.getPose().rotation(),
             )
 
-        dampedSpeeds = ChassisSpeeds(
-            self.xVelDamp.calculate(robotChassisSpeeds.vx),
-            self.yVelDamp.calculate(robotChassisSpeeds.vy),
-            robotChassisSpeeds.omega,
-        )
-        moduleStates = self.kinematics.toSwerveModuleStates(dampedSpeeds)
+        moduleStates = self.kinematics.toSwerveModuleStates(robotChassisSpeeds)
         (
             frontLeftState,
             frontRightState,

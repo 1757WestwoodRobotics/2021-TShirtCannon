@@ -102,7 +102,7 @@ kDriveGearingRatio = (48 / 16) * (16 / 28) * (60 / 15)
 kSteerGearingRatio = (32 / 15) * (60 / 10)
 """dimensionless"""
 
-kMaxMotorAngularVelocity = DCMotor.NEO().freeSpeed
+kMaxMotorAngularVelocity = DCMotor.falcon500().freeSpeed
 """radians / second"""
 
 kMaxWheelAngularVelocity = kMaxMotorAngularVelocity / kDriveGearingRatio
@@ -232,14 +232,14 @@ kConfigurationTimeoutLimit = int(5 * kMillisecondsPerSecond)
 """milliseconds"""
 
 kDrivePIDSlot = 0
-kDrivePGain = 0.12
+kDrivePGain = 0.4
 kDriveIGain = 0.0
-kDriveDGain = 0.0
+kDriveDGain = 0.06
 
 kSteerPIDSlot = 0
-kSteerPGain = 0.6
+kSteerPGain = 0.03
 kSteerIGain = 0.0
-kSteerDGain = 12.0
+kSteerDGain = 8e-5
 
 kFrontLeftDriveInverted = False
 kFrontRightDriveInverted = True
@@ -264,7 +264,7 @@ To determine encoder offsets (with robot ON and DISABLED):
   7. Click "Self-Test Snapshot"
   8. Record value from line: "Absolute Position (unsigned):"
 """
-kFrontLeftAbsoluteEncoderOffset = 139.570
+kFrontLeftAbsoluteEncoderOffset = 94.482
 """degrees"""
 
 kFrontRightAbsoluteEncoderOffset = 83.408

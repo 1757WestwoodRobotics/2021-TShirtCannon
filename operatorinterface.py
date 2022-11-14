@@ -185,29 +185,25 @@ class OperatorInterface:
                 Deadband(
                     lambda: self.driveController.getRawAxis(
                         driveControls["forwardsBackwards"]
-                    )
-                    * self.scaler(),
+                    ),
                     constants.kXboxJoystickDeadband,
                 )
             ),
             Invert(  # left / right
                 Deadband(
-                    lambda: self.driveController.getRawAxis(driveControls["sideToSide"])
-                    * self.scaler(),
+                    lambda: self.driveController.getRawAxis(driveControls["sideToSide"]),
                     constants.kXboxJoystickDeadband,
                 )
             ),
             Invert(
                 Deadband(  # rotational X movement
-                    lambda: self.driveController.getRawAxis(driveControls["rotationX"])
-                    * self.scaler(),
+                    lambda: self.driveController.getRawAxis(driveControls["rotationX"]),
                     constants.kXboxJoystickDeadband,
                 )
             ),
             Invert(
                 Deadband(  # rotational Y movement
-                    lambda: self.driveController.getRawAxis(driveControls["rotationY"])
-                    * self.scaler(),
+                    lambda: self.driveController.getRawAxis(driveControls["rotationY"]),
                     constants.kXboxJoystickDeadband,
                 )
             ),

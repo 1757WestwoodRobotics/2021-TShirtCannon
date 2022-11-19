@@ -1,149 +1,80 @@
 {
-  "drive": "XBOX_DRIVE",
-  "camera": "XBOX_CAMERA",
-  "lightsControlledByCamera": true,
-
-  "XBOX_DRIVE_SIM": {
-    "forwardsBackwards": 1,
-    "sideToSide": 0,
-    "rotationX": 3,
-    "rotationY": 4,
-    "scaler": 2,
-    "lightControl": 5,
-
-    "fieldRelative": 6,
-    "resetSwerveControl": 3,
-    "launchCannon": 8,
-    "fillCannon": 7,
-    "horn": 5,
-    "closeValves": 10,
-
-    "setWaypoint": 180,
-    "goToWaypoint": 0
-  },
-
-  "XBOX_DRIVE_DRIVERSTATION": {
-    "forwardsBackwards": 1,
-    "sideToSide": 0,
-    "rotationX": 4,
-    "rotationY": 5,
-    "scaler": 2,
-    "lightControl": 5,
-
-    "fieldRelative": 6,
-    "resetSwerveControl": 3,
-    "launchCannon": 8,
-    "fillCannon": 7,
-    "horn": 5,
-    "closeValves": 4,
-
-    "setWaypoint": 180,
-    "goToWaypoint": 0
-  },
-
-  "THRUSTMASTER_DRIVE_DRIVERSTATION": {
-    "forwardsBackwards": 1,
-    "sideToSide": 0,
-    "rotation": 2,
-    "scaler": 3,
-    "lightControl": 4,
-
-    "fieldRelative": 4,
-    "resetSwerveControl": 7,
-    "launchCannon": 1,
-    "fillCannon": 2,
-    "horn": 3,
-    "closeValves": 14,
-
-    "setWaypoint": 180,
-    "goToWaypoint": 0
-  },
-
-  "THRUSTMASTER_DRIVE_SIM": {
-    "forwardsBackwards": 1,
-    "sideToSide": 0,
-    "rotation": 2,
-    "scaler": 3,
-    "lightControl": 4,
-
-    "fieldRelative": 4,
-    "resetSwerveControl": 7,
-    "launchCannon": 1,
-    "fillCannon": 2,
-    "horn": 3,
-    "closeValves": 14,
-
-    "setWaypoint": 180,
-    "goToWaypoint": 0
-  },
-  
-  "PLAYSTATION_DRIVE_DRIVERSTATION": {
-    "forwardsBackwards": 1,
-    "sideToSide": 0,
-    "rotation": 2,
-    "scaler": 3,
-    "lightControl": 4,
-    "horn": 5,
-
-    "fieldRelative": 6,
-    "resetSwerveControl": 3,
-    "launchCannon": 10, 
-    "fillCannon": 9,
-    "closeValves": 14,
-
-    "setWaypoint": 180,
-    "goToWaypoint": 0
-  },
-
-  "PLAYSTATION_DRIVE_SIM": {
-    "forwardsBackwards": 1,
-    "sideToSide": 0,
-    "rotation": 2,
-    "scaler": 3,
-    "lightControl": 4,
-    "horn": 5,
-
-    "fieldRelative": 6,
-    "resetSwerveControl": 3,
-    "launchCannon": 10, 
-    "fillCannon": 9,
-    "closeValves": 14,
-
-    "setWaypoint": 180,
-    "goToWaypoint": 0
-  },
-
-  "XBOX_CAMERA_SIM": {
-    "leftRight": 0,
-    "upDown": 1,
-    "light": 2,
-    "horn": 3,
-
-    "pulseTheLights": 270
-  },
-  "XBOX_CAMERA_DRIVERSTATION": {
-    "leftRight": 0,
-    "upDown": 1,
-    "light": 2,
-    "horn": 3,
-    
-    "pulseTheLights": 270
-  },
-  
-  "PLAYSTATION_CAMERA_SIM": {
-    "leftRight": 0,
-    "upDown": 1,
-    "light": 3,
-    "horn": 4,
-
-    "pulseTheLights": 270
-  },
-  "PLAYSTATION_CAMERA_DRIVERSTATION": {
-    "leftRight": 0,
-    "upDown": 1,
-    "light": 3,
-    "horn": 4,
-
-    "pulseTheLights": 270
-  }
+  "forwardsBackwards": [
+    0,
+    {
+      "Axis": 1
+    }
+  ],
+  "leftRight": [
+    0,
+    {
+      "Axis": 0
+    }
+  ],
+  "rotationX": [
+    1,
+    {
+      "Axis": 0
+    }
+  ],
+  "rotationY": [
+    1,
+    {
+      "Axis": 1
+    }
+  ],
+  "fillCannon": [
+    1,
+    {
+      "Button": 1
+    }
+  ],
+  "launchCannon": [
+    0,
+    {
+      "Button": 1
+    }
+  ],
+  "closeValves": [
+    0,
+    {
+      "Button": 2
+    }
+  ],
+  "resetSwerveControl": [
+    1,
+    {
+      "Button": 10
+    }
+  ],
+  "returnPositionInput": [
+    1,
+    {
+      "Button": 4
+    }
+  ],
+  "returnModeControl": [
+    1,
+    {
+      "Button": 5
+    }
+  ],
+  "pulseTheLights": [
+    0,
+    {
+      "Button": 3
+    }
+  ],
+  "hornControl": [
+    1,
+    {
+      "Button": 2
+    }
+  ],
+  "lightControl": [
+    0,
+    {
+      "Button": 4
+    }
+  ]
 }

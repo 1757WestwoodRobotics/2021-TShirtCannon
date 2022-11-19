@@ -1,5 +1,5 @@
 from os import path
-from wpilib import Joystick, RobotBase
+from wpilib import Joystick, RobotBase, Preferences
 
 import typing
 import json
@@ -87,123 +87,84 @@ class OperatorInterface:
                 file
             )  # get the generau control scheme defined in controlInterface.json
 
-        driveControls = controlScheme[
-            controlScheme["drive"]
-            + ("_SIM" if not RobotBase.isReal() else "_DRIVERSTATION")
-        ]  # get controls, accounting for the difference in the simulator and the actual driverstation
+        with open(
+            path.join(path.dirname(path.realpath(__file__)), "controlInterface.json"),
+            "r",
+            encoding="utf-8",
+        ) as file:
+            controlScheme = json.load(file)
 
-        camControls = controlScheme[
-            controlScheme["camera"]
-            + ("_SIM" if not RobotBase.isReal() else "_DRIVERSTATION")
-        ]
+        controllerNumbers = set([0, 1, 2, 3, 4, 5])  # set ensures no duplicates
+        print(f"Looking for controllers: {controllerNumbers} ...")
 
-        self.driveController = Joystick(
-            constants.kXboxControllerPort
-        )  # main drive controller
-        self.cameraController = Joystick(
-            constants.kCameraControllerPort
-        )  # camera controller
+        controllers = {}
 
-        self.scaler = (
-            lambda: 0.3
-        )  # motor scaler, used to decrease the velocity through a single control
+        self.prefs = Preferences
 
-        self.returnPositionInput = (
-            self.driveController,
-            driveControls["setWaypoint"],
-            0,
-        )  # D Pad / POV button to set a waypoint to return to later
+        for control in controlScheme:
+            binding = controlScheme[control]
+            self.prefs.initInt(control + " controller", binding[0])
+            if "Button" in binding[1].keys():
+                self.prefs.initInt(control + " button", binding[1]["Button"])
+            elif "Axis" in binding[1].keys():
+                self.prefs.initInt(control + " axis", binding[1]["Axis"])
 
-        self.returnModeControl = (
-            self.driveController,
-            driveControls["goToWaypoint"],
-            0,
-        )  # D Pad / POV button to return to the waypoint defined above
-
-        self.pulseTheLights = (self.cameraController, camControls["pulseTheLights"], 0)
-
-        self.fillCannon = (
-            self.driveController,
-            driveControls["fillCannon"],
-        )  # button to fill the cannon for firing
-        self.launchCannon = (
-            self.driveController,
-            driveControls["launchCannon"],
-        )  # FIRE!
-        self.closeValves = (self.driveController, driveControls["closeValves"])
-
-        self.coordinateModeControl = (
-            self.driveController,
-            driveControls["fieldRelative"],
-        )  # switch from robot centric and field centric
-
-        self.resetSwerveControl = (
-            self.driveController,
-            driveControls["resetSwerveControl"],
-        )  # reset swerve drive orientation and motors
-
-        self.cameraControls = CameraControl(  # camera related axis control
-            Invert(  # left/right
-                Deadband(
-                    lambda: self.cameraController.getRawAxis(camControls["leftRight"]),
-                    constants.kXboxJoystickDeadband,
-                )
-            ),
-            Invert(  # up/down
-                Deadband(
-                    lambda: self.cameraController.getRawAxis(camControls["upDown"]),
-                    constants.kXboxJoystickDeadband,
-                )
-            ),
-        )
-
-        self.lightControl = Abs(
-            lambda: self.driveController.getRawAxis(
-                driveControls["lightControl"]
-                if not controlScheme["lightsControlledByCamera"]
-                else camControls["light"]
+        for num in controllerNumbers:
+            controller = Joystick(num)
+            print(
+                f"Found Controller {num}:{controller.getName()}\n\tAxis: {controller.getAxisCount()}\n\tButtons: {controller.getButtonCount()}\n\tPoV Hats: {controller.getPOVCount()}"
             )
-        )  # control for the lights (trigger axis by default)
+            controllers[num] = controller
 
-        # self.hornControl = (self.driveController, driveControls["horn"]) This is reg button version
+        def getButtonBindingOfName(
+            name: str,
+        ) -> typing.Callable[[], typing.Tuple[Joystick, int]]:
+            return lambda: (
+                controllers[self.prefs.getInt(name + " controller")],
+                self.prefs.getInt(name + " button"),
+            )
 
-        if controlScheme["camera"] == "XBOX_CAMERA":
-            self.hornControl = Deadband(
-                lambda: self.cameraController.getRawAxis(camControls["horn"]),
-                constants.kXboxJoystickDeadband,
-            )
-        elif controlScheme["camera"] == "PLAYSTATION_CAMERA":
-            self.hornControl = Deadband(
-                lambda: map_range(
-                    self.cameraController.getRawAxis(camControls["horn"]), -1, 1, 0, 1
-                ),
-                constants.kXboxJoystickDeadband,
-            )
+        def getAxisBindingOfName(name: str) -> AnalogInput:
+            return lambda: controllers[
+                self.prefs.getInt(name + " controller")
+            ].getRawAxis(self.prefs.getInt(name + " axis"))
+
+        self.returnPositionInput = getButtonBindingOfName("returnPositionInput")
+        self.returnModeControl = getButtonBindingOfName("returnModeControl")
+        self.pulseTheLights = getButtonBindingOfName("pulseTheLights")
+
+        self.fillCannon = getButtonBindingOfName("fillCannon")
+        self.launchCannon = getButtonBindingOfName("launchCannon")
+        self.closeValves = getButtonBindingOfName("closeValves")
+
+        self.coordinateModeControl = getButtonBindingOfName("coordinateModeControl")
+        self.resetSwerveControl = getButtonBindingOfName("resetSwerveControl")
+
+        self.lightControl = getButtonBindingOfName("lightControl")
+        self.hornControl = getButtonBindingOfName("hornControl")
 
         self.chassisControls = HolonomicInput(  # drive controls, allows for any directional movement and rotation
             Invert(  # forwards / backwards
                 Deadband(
-                    lambda: self.driveController.getRawAxis(
-                        driveControls["forwardsBackwards"]
-                    ),
+                    getAxisBindingOfName("forwardsBackwards"),
                     constants.kXboxJoystickDeadband,
                 )
             ),
             Invert(  # left / right
                 Deadband(
-                    lambda: self.driveController.getRawAxis(driveControls["sideToSide"]),
+                    getAxisBindingOfName("leftRight"),
                     constants.kXboxJoystickDeadband,
                 )
             ),
             Invert(
                 Deadband(  # rotational X movement
-                    lambda: self.driveController.getRawAxis(driveControls["rotationX"]),
+                    getAxisBindingOfName("rotationX"),
                     constants.kXboxJoystickDeadband,
                 )
             ),
             Invert(
                 Deadband(  # rotational Y movement
-                    lambda: self.driveController.getRawAxis(driveControls["rotationY"]),
+                    getAxisBindingOfName("rotationY"),
                     constants.kXboxJoystickDeadband,
                 )
             ),

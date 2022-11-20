@@ -297,7 +297,7 @@ kAutoDriveSpeedFactor = 0.5
 
 # drive control related values
 
-kRotationPGain = 0.8
+kRotationPGain = 0.5
 kRotationIGain = 0
 kRotationDGain = 0
 

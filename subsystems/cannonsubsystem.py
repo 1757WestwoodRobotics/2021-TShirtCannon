@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from commands2 import SubsystemBase
 from ctre import WPI_TalonSRX
-from wpilib import Solenoid, PneumaticsModuleType, AnalogInput, SmartDashboard
+from wpilib import Relay, Solenoid, PneumaticsModuleType, AnalogInput, SmartDashboard
 import constants, typing
 
 
@@ -38,12 +38,18 @@ class CannonSubsystem(SubsystemBase):
             PneumaticsModuleType.CTREPCM,
             constants.kCannonFillPCMID,
         )
+        self.compresser = Relay(0,direction=Relay.Direction.kForwardOnly)
         self.pressure = AnalogInput(constants.kCannonPressureAnalogInput)
         self.launchSolonoid.configFactoryDefault()
 
         self.fillSolonoid.set(False)
         self.launchSolonoid.set(0.0)
         self.state = CannonSubsystem.State.Closed
+
+        self.compresser.set(Relay.Value.kOn)
+
+    def periodic(self) -> None:
+        self.compresser.set(Relay.Value.kOn)
 
     def getPressure(self) -> float:
         return map_range(

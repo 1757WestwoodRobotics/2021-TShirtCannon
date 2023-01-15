@@ -15,7 +15,6 @@ Swerve Module Layout:
 import math
 from wpimath.geometry import Translation2d
 from wpimath.system.plant import DCMotor
-from foxglove import FoxglovePublisher
 
 # Basic units
 kCentimetersPerInch = 2.54
@@ -343,10 +342,22 @@ kPressureInMax = 200
 kRobotPowerChannelsKey = "powerDistribution"
 kRobotVoltageChannelKey = "powerVoltage"
 
-foxglove_sub_topics = {
-    "RobotPose": (kRobotPoseArrayKeys, FoxglovePublisher.FoxgloveType.Pose2d),
-    "CannonState": (kCannonStateKey, FoxglovePublisher.FoxgloveType.Number),
-    "PowerChannels": (kRobotPowerChannelsKey, FoxglovePublisher.FoxgloveType.NumberArray),
-    "Voltage": (kRobotVoltageChannelKey, FoxglovePublisher.FoxgloveType.Number),
-    "Pressure": (kPressureKey, FoxglovePublisher.FoxgloveType.Number)
-}
+
+kRobotUpdatePeriod = .02
+
+
+kMotorBaseKey = "motors"
+
+#Arm testing stuff
+kArmSafeDistanceEncoderTicks = 948
+kArmGearRatio = 5/1
+kArmPulleyRatio = 10/3
+kArmMotorPIDSlot = 0
+kArmMotorPGain = 0.01 #.025
+kArmMotorIGain = 0
+kArmMotorDGain = 0
+kArmEncoderTicksKey = "armEncoderTicks"
+kArmMovingOnKey = "MoveTheArm"
+kArmTargetDegreesKey = "TargetDegrees"
+kArmMotorID = 3 #CHAHGE FR
+kArmMotorInversion = False

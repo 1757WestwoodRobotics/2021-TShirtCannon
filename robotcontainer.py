@@ -9,14 +9,14 @@ from subsystems.cannonsubsystem import CannonSubsystem
 from subsystems.hornsubsystem import HornSubsystem
 from subsystems.lightsubsystem import LightSubsystem
 import wpilib
-
+from util.helpfultriggerwrappers import SmartDashboardButton
 import commands2
 import commands2.button
 from commands.varyoutput import RelayControl
 from commands.rotatecamera import RotateCamera
-
+from commands.armposition import SetArmPosition
 import constants
-
+from wpilib import SmartDashboard
 from commands.complexauto import ComplexAuto
 from commands.drivedistance import DriveDistance
 from commands.defaultdrive import DefaultDrive
@@ -29,6 +29,7 @@ from commands.returndrive import ReturnDrive
 from commands.setreturn import SetReturn
 
 from subsystems.drivesubsystem import DriveSubsystem
+from subsystems.armsubsystem import ArmSubsystem
 
 from operatorinterface import OperatorInterface
 from subsystems.systemlog import SystemLogSubsystem
@@ -54,6 +55,7 @@ class RobotContainer:
         self.light = LightSubsystem()
         self.horn = HornSubsystem()
         self.log = SystemLogSubsystem()
+        self.arm = ArmSubsystem()
 
         # compressor
         self.compressor = Compressor(
@@ -118,6 +120,9 @@ class RobotContainer:
             HornHonk(self.horn, self.operatorInterface.hornControl)
         )
 
+        SmartDashboard.putBoolean(constants.kArmMovingOnKey, False)
+        SmartDashboard.putNumber(constants.kArmTargetDegreesKey, 0)
+
     def configureButtonBindings(self):
         """
         Use this method to define your button->command mappings. Buttons can be created by
@@ -173,6 +178,9 @@ class RobotContainer:
         # commands2.button.JoystickButton(
         #     *self.operatorInterface.honkControl
         # ).whileHeld(HornHonk(self.light2))
+        SmartDashboardButton(constants.kArmMovingOnKey).whileHeld(
+            SetArmPosition(self.arm)
+        )
 
     def getAutonomousCommand(self) -> commands2.Command:
         return self.chooser.getSelected()

@@ -2,8 +2,7 @@
 import typing
 
 import commands2
-
-from foxglove import FoxglovePublisher
+import wpilib
 from robotcontainer import RobotContainer
 
 import constants
@@ -61,5 +60,4 @@ class MentorBot(commands2.TimedCommandRobot):
         commands2.CommandScheduler.getInstance().cancelAll()
 
 if __name__ == "__main__":
-    foxglove_pub = FoxglovePublisher(**constants.foxglove_sub_topics)
-    foxglove_pub.run_bot(MentorBot)
+    wpilib.run(MentorBot)

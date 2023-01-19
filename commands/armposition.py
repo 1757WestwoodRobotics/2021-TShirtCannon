@@ -14,5 +14,24 @@ class SetArmPosition(CommandBase):
         self.addRequirements([self.arm])
 
     def execute(self) -> None:
-        armAngle = SmartDashboard.getNumber(constants.kArmTargetDegreesKey, 550)
-        self.arm.setArmAngle(armAngle)
+        self.armAngle = SmartDashboard.getNumber(constants.kArmTargetDegreesKey, 550)
+        self.arm.setArmAngle(self.armAngle)
+
+    def end(self, _interrupted: bool) -> None:
+        print("SUSSY ENDING (no imposters)s")
+        SmartDashboard.putBoolean(constants.kArmMovingOnKey, False)
+    
+    def isFinished(self) -> bool:
+        # if (
+        #     (x:= abs(
+        #         (
+        #             self.arm.armMotor.getSelectedSensorPosition()
+        #             - self.arm.convertToEncoderTicks(self.armAngle)
+        #         )
+        #     ))
+        #     < constants.kArmPositionThreshold
+        # ) :
+        #     print("SIS")
+        #     return True
+        # print(x)
+        return False

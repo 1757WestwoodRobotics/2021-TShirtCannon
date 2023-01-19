@@ -55,9 +55,13 @@ class ArmSubsystem(SubsystemBase):
         )
         self.armMotor.configReverseSoftLimitEnable(True)
     
+    def convertToEncoderTicks(self, degrees) -> int:
+        encoderTicks = (degrees * constants.kTalonEncoderPulsesPerRevolution * constants.kArmGearRatio * constants.kArmPulleyRatio) / (constants.kDegeersPerRevolution)
+        return encoderTicks
+
 
     def setArmAngle(self, degrees) -> None:
-        encoderTicks = (degrees * constants.kTalonEncoderPulsesPerRevolution * constants.kArmGearRatio * constants.kArmPulleyRatio) / (constants.kDegeersPerRevolution)
+        encoderTicks = self.convertToEncoderTicks(degrees)
         self.armMotor.set(
             ControlMode.Position, encoderTicks
         )

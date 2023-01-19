@@ -359,5 +359,6 @@ kArmMotorDGain = 0
 kArmEncoderTicksKey = "armEncoderTicks"
 kArmMovingOnKey = "MoveTheArm"
 kArmTargetDegreesKey = "TargetDegrees"
-kArmMotorID = 3 #CHAHGE FR
+kArmMotorID = 44 #CHAHGE FR
 kArmMotorInversion = False
+kArmPositionThreshold = 30

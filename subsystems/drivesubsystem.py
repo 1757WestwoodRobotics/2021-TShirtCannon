@@ -21,6 +21,8 @@ from wpimath.kinematics import (
 from wpimath.filter import SlewRateLimiter
 from enum import Enum, auto
 from typing import Tuple
+
+from wpimath.kinematics._kinematics import SwerveModulePosition
 import constants
 from util.convenietmath import optimizeAngle
 
@@ -55,6 +57,12 @@ class SwerveModule:
             self.getWheelLinearVelocity(),
             self.getSwerveAngle(),
         )
+
+    def getWheelTotalPosition(self) -> float:
+        raise NotImplementedError("Must be implemented by subclass")
+
+    def getPosition(self) -> SwerveModulePosition:
+        return SwerveModulePosition(self.getWheelTotalPosition(), self.getSwerveAngle())
 
     def applyState(self, state: SwerveModuleState) -> None:
         optimizedState = SwerveModuleState.optimize(state, self.getSwerveAngle())
@@ -105,6 +113,9 @@ class PWMSwerveModule(SwerveModule):
 
     def getWheelLinearVelocity(self) -> float:
         return self.wheelEncoder.getRate()
+
+    def getWheelTotalPosition(self) -> float:
+        return self.wheelEncoder.getDistance()
 
     def setWheelLinearVelocityTarget(self, wheelLinearVelocityTarget: float) -> None:
         speedFactor = wheelLinearVelocityTarget / constants.kMaxWheelLinearVelocity
@@ -312,6 +323,9 @@ class REVSwerveModule(SwerveModule):
         self.steerMotorController.setReference(
             steerAngleDegrees, CANSparkMax.ControlType.kPosition
         )
+
+    def getWheelTotalPosition(self) -> float:
+        return self.driveMotorEncover.getPosition()
 
     def getWheelLinearVelocity(self) -> float:
         """meters / second"""
@@ -667,7 +681,17 @@ class DriveSubsystem(SubsystemBase):
 
         # Create the an object for our odometry, which will utilize sensor data to
         # keep a record of our position on the field.
-        self.odometry = SwerveDrive4Odometry(self.kinematics, self.gyro.getRotation2d())
+        self.odometry = SwerveDrive4Odometry(
+            self.kinematics,
+            self.getRotation(),
+            (
+                self.frontLeftModule.getPosition(),
+                self.frontRightModule.getPosition(),
+                self.backLeftModule.getPosition(),
+                self.backRightModule.getPosition(),
+            ),
+            Pose2d(),
+        )
 
         self.printTimer = Timer()
         # self.printTimer.start()
@@ -678,16 +702,37 @@ class DriveSubsystem(SubsystemBase):
         for module in self.modules:
             module.reset()
         self.gyro.reset()
-        self.odometry.resetPosition(Pose2d(), self.gyro.getRotation2d())
+        self.odometry.resetPosition(
+            self.gyro.getRotation2d(),
+            Pose2d(),
+            self.frontLeftModule.getPosition(),
+            self.frontRightModule.getPosition(),
+            self.backLeftModule.getPosition(),
+            self.backRightModule.getPosition(),
+        )
 
     def setOdometryPosition(self, pose: Pose2d):
         self.gyro.setAngleAdjustment(pose.rotation().degrees())
-        self.odometry.resetPosition(pose, self.gyro.getRotation2d())
+        self.odometry.resetPosition(
+            self.gyro.getRotation2d(),
+            pose,
+            self.frontLeftModule.getPosition(),
+            self.frontRightModule.getPosition(),
+            self.backLeftModule.getPosition(),
+            self.backRightModule.getPosition(),
+        )
 
     def resetGyro(self, pose: Pose2d):
         self.gyro.reset()
         self.gyro.setAngleAdjustment(pose.rotation().degrees())
-        self.odometry.resetPosition(pose, self.gyro.getRotation2d())
+        self.odometry.resetPosition(
+            self.gyro.getRotation2d(),
+            pose,
+            self.frontLeftModule.getPosition(),
+            self.frontRightModule.getPosition(),
+            self.backLeftModule.getPosition(),
+            self.backRightModule.getPosition(),
+        )
 
     def getRotation(self) -> Rotation2d:
         return self.gyro.getRotation2d()
@@ -698,11 +743,11 @@ class DriveSubsystem(SubsystemBase):
         odometry with sensor data.
         """
         self.odometry.update(
-            self.gyro.getRotation2d(),
-            self.frontLeftModule.getState(),
-            self.frontRightModule.getState(),
-            self.backLeftModule.getState(),
-            self.backRightModule.getState(),
+            self.getRotation(),
+            self.frontLeftModule.getPosition(),
+            self.frontRightModule.getPosition(),
+            self.backLeftModule.getPosition(),
+            self.backRightModule.getPosition(),
         )
 
         robotPose = self.odometry.getPose()
@@ -711,7 +756,7 @@ class DriveSubsystem(SubsystemBase):
 
         SmartDashboard.putNumberArray(constants.kRobotPoseArrayKeys, robotPoseArray)
 
-        if self.printTimer.hasPeriodPassed(constants.kPrintPeriod):
+        if self.printTimer.hasElapsed(constants.kPrintPeriod):
             rX = self.odometry.getPose().translation().X()
             rY = self.odometry.getPose().translation().Y()
             rAngle = int(self.odometry.getPose().rotation().degrees())

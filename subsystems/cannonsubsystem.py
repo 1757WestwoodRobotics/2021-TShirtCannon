@@ -26,10 +26,6 @@ class CannonSubsystem(SubsystemBase):
         Filling = auto()
         Launching = auto()
 
-    def periodic(self) -> None:
-        SmartDashboard.putNumber(constants.kCannonStateKey, self.state.value)
-        SmartDashboard.putNumber(constants.kPressureKey, self.getPressure())
-
     def __init__(self) -> None:
         SubsystemBase.__init__(self)
         self.launchSolonoid = WPI_TalonSRX(constants.kCannonLaunchVictorDeviceID)
@@ -50,6 +46,8 @@ class CannonSubsystem(SubsystemBase):
 
     def periodic(self) -> None:
         self.compresser.set(Relay.Value.kOn)
+        SmartDashboard.putNumber(constants.kCannonStateKey, self.state.value)
+        SmartDashboard.putNumber(constants.kPressureKey, self.getPressure())
 
     def getPressure(self) -> float:
         return map_range(

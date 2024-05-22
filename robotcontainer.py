@@ -87,12 +87,11 @@ class RobotContainer:
         self.configureButtonBindings()
 
         self.drive.setDefaultCommand(
-            AbsoluteRelativeDrive(
+            FieldRelativeDrive(
                 self.drive,
                 self.operatorInterface.chassisControls.forwardsBackwards,
                 self.operatorInterface.chassisControls.sideToSide,
                 self.operatorInterface.chassisControls.rotationX,
-                self.operatorInterface.chassisControls.rotationY,
             )
         )
 

@@ -103,11 +103,11 @@ class OperatorInterface:
 
         for control in controlScheme:
             binding = controlScheme[control]
-            self.prefs.initInt(control + " controller", binding[0])
+            self.prefs.setInt(control + " controller", binding[0])
             if "Button" in binding[1].keys():
-                self.prefs.initInt(control + " button", binding[1]["Button"])
+                self.prefs.setInt(control + " button", binding[1]["Button"])
             elif "Axis" in binding[1].keys():
-                self.prefs.initInt(control + " axis", binding[1]["Axis"])
+                self.prefs.setInt(control + " axis", binding[1]["Axis"])
 
         for num in controllerNumbers:
             controller = Joystick(num)

@@ -22,8 +22,6 @@ import constants
 from pyfrc.physics.core import PhysicsInterface
 
 
-
-
 class SwerveModuleSim:
     def __init__(
         self,
@@ -103,7 +101,7 @@ class SwerveDriveSim:
             )
             states.append(state)
 
-        chassisSpeed = self.kinematics.toChassisSpeeds(states)
+        chassisSpeed = self.kinematics.toChassisSpeeds(*states)
         deltaHeading = chassisSpeed.omega * deltaT
         deltaX = chassisSpeed.vx * deltaT
         deltaY = chassisSpeed.vy * deltaT
@@ -179,7 +177,6 @@ class PhysicsEngine:
 
         self.gyroSim = SimDeviceSim("navX-Sensor[4]")
         self.gyroYaw = self.gyroSim.getDouble("Yaw")
-
 
     def update_sim(self, now: float, tm_diff: float) -> None:
         """

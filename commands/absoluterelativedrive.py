@@ -48,8 +48,8 @@ class AbsoluteRelativeDrive(CommandBase):
 
     def execute(self) -> None:
         self.drive.arcadeDriveWithFactors(
-            self.forward(),
-            self.sideways(),
+            -self.forward(),
+            -self.sideways(),
             self.rotation(),
             DriveSubsystem.CoordinateMode.FieldRelative,
         )

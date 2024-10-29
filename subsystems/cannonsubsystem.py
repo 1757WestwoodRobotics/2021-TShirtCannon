@@ -1,11 +1,12 @@
 from enum import Enum, auto
 from commands2 import SubsystemBase
-from ctre import WPI_VictorSPX
-from wpilib import Solenoid, PneumaticsModuleType, AnalogInput, SmartDashboard
+from ctre import WPI_TalonSRX
+from wpilib import Relay, Solenoid, PneumaticsModuleType, AnalogInput, SmartDashboard
 import constants, typing
 
 
 number = typing.Union[float, int]
+
 
 def map_range(
     value: number,
@@ -25,23 +26,28 @@ class CannonSubsystem(SubsystemBase):
         Filling = auto()
         Launching = auto()
 
-    def periodic(self) -> None:
-        SmartDashboard.putNumber(constants.kCannonStateKey, self.state.value)
-        SmartDashboard.putNumber(constants.kPressureKey, self.getPressure())
-
     def __init__(self) -> None:
         SubsystemBase.__init__(self)
-        self.launchSolonoid = WPI_VictorSPX(constants.kCannonLaunchVictorDeviceID)
+        self.launchSolonoid = WPI_TalonSRX(constants.kCannonLaunchVictorDeviceID)
         self.fillSolonoid = Solenoid(
             constants.kPCMCannonCanID,
             PneumaticsModuleType.CTREPCM,
             constants.kCannonFillPCMID,
         )
+        self.compresser = Relay(0,direction=Relay.Direction.kForwardOnly)
         self.pressure = AnalogInput(constants.kCannonPressureAnalogInput)
+        self.launchSolonoid.configFactoryDefault()
 
         self.fillSolonoid.set(False)
         self.launchSolonoid.set(0.0)
         self.state = CannonSubsystem.State.Closed
+
+        self.compresser.set(Relay.Value.kOn)
+
+    def periodic(self) -> None:
+        self.compresser.set(Relay.Value.kOn)
+        SmartDashboard.putNumber(constants.kCannonStateKey, self.state.value)
+        SmartDashboard.putNumber(constants.kPressureKey, self.getPressure())
 
     def getPressure(self) -> float:
         return map_range(
@@ -57,20 +63,19 @@ class CannonSubsystem(SubsystemBase):
         self.fillSolonoid.set(False)
         self.launchSolonoid.set(0.0)
         self.state = CannonSubsystem.State.Closed
-        # print("CLOSING")
+        print("CLOSING")
 
     def fill(self) -> None:
         """begins filling staging tank"""
-        # self.launchSolonoid.set(
-        #     Relay.Value.kOff
-        # )  #ensure air doesnt just flow out the end without being stored
+        print("FILLING")
         self.launchSolonoid.set(0.0)
         self.fillSolonoid.set(True)
         print(self.fillSolonoid.get())
-        print("FILLING")
         self.state = CannonSubsystem.State.Filling
 
     def launch(self) -> None:
+        """lets air escape through the end of the cannon"""
+        print("LAUNCHING")
         self.fillSolonoid.set(False)
         self.launchSolonoid.set(1.0)
         print(self.launchSolonoid.get())

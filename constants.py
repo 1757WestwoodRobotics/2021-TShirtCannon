@@ -15,7 +15,6 @@ Swerve Module Layout:
 import math
 from wpimath.geometry import Translation2d
 from wpimath.system.plant import DCMotor
-from foxglove import FoxglovePublisher
 
 # Basic units
 kCentimetersPerInch = 2.54
@@ -23,6 +22,9 @@ kCentimetersPerInch = 2.54
 
 kCentimetersPerMeter = 100
 """centimeters / meter"""
+
+kSecondsPerMinute = 60
+"""seconds / minutes"""
 
 kMetersPerInch = kCentimetersPerInch / kCentimetersPerMeter
 """meters / inch"""
@@ -211,6 +213,15 @@ kSwerveEncoderPulsesPerRadian = (
 )
 """pulses / radian"""
 
+# REV Modules
+kSwerveMotorDegreesPerEncoderRev = kDegeersPerRevolution / kSteerGearingRatio
+"""end degrees / motor revolution"""
+kSwerveMetersPerDriveEncoderRevolution = (kWheelDiameter * math.pi) / kDriveGearingRatio
+"""drive meters / motor revolution"""
+# in one minutes, 1rpm encoder moves at kSwerveMotorDegreesPerEncoderRev, so in 1 second it travels at 1/60th
+kSwerveDriveEncoderRPMperMPS = kSwerveMetersPerDriveEncoderRevolution / 60
+"""motor rpm / wheel mps"""
+
 # CTRE
 k100MillisecondsPerSecond = 10 / 1  # there are 10 groups of 100 milliseconds per second
 """100 milliseconds / second
@@ -221,14 +232,14 @@ kConfigurationTimeoutLimit = int(5 * kMillisecondsPerSecond)
 """milliseconds"""
 
 kDrivePIDSlot = 0
-kDrivePGain = 0.12
+kDrivePGain = 0.4
 kDriveIGain = 0.0
-kDriveDGain = 0.0
+kDriveDGain = 0.06
 
 kSteerPIDSlot = 0
-kSteerPGain = 0.6
+kSteerPGain = 0.03
 kSteerIGain = 0.0
-kSteerDGain = 12.0
+kSteerDGain = 8e-5
 
 kFrontLeftDriveInverted = False
 kFrontRightDriveInverted = True
@@ -253,16 +264,16 @@ To determine encoder offsets (with robot ON and DISABLED):
   7. Click "Self-Test Snapshot"
   8. Record value from line: "Absolute Position (unsigned):"
 """
-kFrontLeftAbsoluteEncoderOffset = 314.912
+kFrontLeftAbsoluteEncoderOffset = 94.482
 """degrees"""
 
-kFrontRightAbsoluteEncoderOffset = 5.713
+kFrontRightAbsoluteEncoderOffset = 83.408
 """degrees"""
 
-kBackLeftAbsoluteEncoderOffset = 19.424
+kBackLeftAbsoluteEncoderOffset = 227.988
 """degrees"""
 
-kBackRightAbsoluteEncoderOffset = 142.998
+kBackRightAbsoluteEncoderOffset = 140.449
 """degrees"""
 
 kRobotPoseArrayKeys = "RobotPoseArray"
@@ -286,7 +297,7 @@ kAutoDriveSpeedFactor = 0.5
 
 # drive control related values
 
-kRotationPGain = 0.8
+kRotationPGain = 0.5
 kRotationIGain = 0
 kRotationDGain = 0
 
@@ -339,14 +350,14 @@ kVoltageOutMax = 4.5
 kPressureInMin = 0
 kPressureInMax = 200
 
-#power stuff
+# power stuff
 kRobotPowerChannelsKey = "powerDistribution"
 kRobotVoltageChannelKey = "powerVoltage"
 
-foxglove_sub_topics = {
-    "RobotPose": (kRobotPoseArrayKeys, FoxglovePublisher.FoxgloveType.Pose2d),
-    "CannonState": (kCannonStateKey, FoxglovePublisher.FoxgloveType.Number),
-    "PowerChannels": (kRobotPowerChannelsKey, FoxglovePublisher.FoxgloveType.NumberArray),
-    "Voltage": (kRobotVoltageChannelKey, FoxglovePublisher.FoxgloveType.Number),
-    "Pressure": (kPressureKey, FoxglovePublisher.FoxgloveType.Number)
-}
+# foxglove_sub_topics = {
+#     "RobotPose": (kRobotPoseArrayKeys, FoxglovePublisher.FoxgloveType.Pose2d),
+#     "CannonState": (kCannonStateKey, FoxglovePublisher.FoxgloveType.Number),
+#     "PowerChannels": (kRobotPowerChannelsKey, FoxglovePublisher.FoxgloveType.NumberArray),
+#     "Voltage": (kRobotVoltageChannelKey, FoxglovePublisher.FoxgloveType.Number),
+#     "Pressure": (kPressureKey, FoxglovePublisher.FoxgloveType.Number)
+# }

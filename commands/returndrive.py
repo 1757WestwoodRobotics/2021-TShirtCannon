@@ -9,14 +9,12 @@ class ReturnDrive(CommandBase):
     def __init__(
         self,
         drive: DriveSubsystem,
-        scaler: typing.Callable[[], float],
         rotation: typing.Callable[[], float],
     ) -> None:
         CommandBase.__init__(self)
         self.setName(__class__.__name__)
 
         self.drive = drive
-        self.scaler = scaler
         self.rotation = rotation
 
         self.addRequirements([self.drive])
@@ -52,8 +50,8 @@ class ReturnDrive(CommandBase):
         deadband = 0.1
 
         self.drive.arcadeDriveWithFactors(
-            self.Deadband(self.getDirection()[0], deadband) * self.scaler(),
-            self.Deadband(self.getDirection()[1], deadband) * self.scaler(),
+            self.Deadband(self.getDirection()[0], deadband),
+            self.Deadband(self.getDirection()[1], deadband),
             self.rotation() * -1,
             DriveSubsystem.CoordinateMode.FieldRelative,
         )

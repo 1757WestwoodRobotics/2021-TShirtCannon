@@ -13,16 +13,13 @@ import wpilib
 import commands2
 import commands2.button
 from commands.varyoutput import RelayControl
-from commands.rotatecamera import RotateCamera
 
 import constants
 
 from commands.complexauto import ComplexAuto
 from commands.drivedistance import DriveDistance
-from commands.defaultdrive import DefaultDrive
 from commands.fieldrelativedrive import FieldRelativeDrive
 from commands.resetdrive import ResetDrive
-from subsystems.cameracontroller import CameraSubsystem
 
 from commands.returndrive import ReturnDrive
 
@@ -31,7 +28,7 @@ from commands.setreturn import SetReturn
 from subsystems.drivesubsystem import DriveSubsystem
 
 from operatorinterface import OperatorInterface
-from subsystems.systemlog import SystemLogSubsystem
+from util.helpfultriggerwrappers import ModifiableJoystickButton
 
 
 class RobotContainer:
@@ -49,11 +46,10 @@ class RobotContainer:
 
         # The robot's subsystems
         self.drive = DriveSubsystem()
-        self.camera = CameraSubsystem()
         self.cannon = CannonSubsystem()
         self.light = LightSubsystem()
         self.horn = HornSubsystem()
-        self.log = SystemLogSubsystem()
+        # self.log = SystemLogSubsystem()
 
         # compressor
         self.compressor = Compressor(
@@ -91,31 +87,12 @@ class RobotContainer:
         self.configureButtonBindings()
 
         self.drive.setDefaultCommand(
-            AbsoluteRelativeDrive(
+            FieldRelativeDrive(
                 self.drive,
                 self.operatorInterface.chassisControls.forwardsBackwards,
                 self.operatorInterface.chassisControls.sideToSide,
                 self.operatorInterface.chassisControls.rotationX,
-                self.operatorInterface.chassisControls.rotationY,
             )
-        )
-
-        self.camera.setDefaultCommand(
-            RotateCamera(
-                self.camera,
-                self.operatorInterface.cameraControls.leftRight,
-                self.operatorInterface.cameraControls.upDown,
-            )
-        )
-
-        # self.cannon.setDefaultCommand(
-        #     SetCannon(self.cannon, SetCannon.Mode.Off))
-        self.light.setDefaultCommand(
-            RelayControl(self.light, self.operatorInterface.lightControl)
-        )
-
-        self.horn.setDefaultCommand(
-            HornHonk(self.horn, self.operatorInterface.hornControl)
         )
 
     def configureButtonBindings(self):
@@ -124,8 +101,8 @@ class RobotContainer:
         instantiating a :GenericHID or one of its subclasses (Joystick or XboxController),
         and then passing it to a JoystickButton.
         """
-        commands2.button.JoystickButton(
-            *self.operatorInterface.coordinateModeControl
+        ModifiableJoystickButton(
+            self.operatorInterface.coordinateModeControl
         ).whileHeld(
             FieldRelativeDrive(
                 self.drive,
@@ -135,44 +112,47 @@ class RobotContainer:
             )
         )
 
-        commands2.button.JoystickButton(
-            *self.operatorInterface.resetSwerveControl
-        ).whenPressed(ResetDrive(self.drive))
+        ModifiableJoystickButton(self.operatorInterface.resetSwerveControl).whenPressed(
+            ResetDrive(self.drive)
+        )
 
-        commands2.button.JoystickButton(*self.operatorInterface.fillCannon).whenPressed(
+        ModifiableJoystickButton(self.operatorInterface.fillCannon).whenPressed(
             SetCannon(self.cannon, SetCannon.Mode.Fill)
         )
 
-        commands2.button.JoystickButton(
-            *self.operatorInterface.launchCannon
-        ).whenPressed(SetCannon(self.cannon, SetCannon.Mode.Launch))
+        ModifiableJoystickButton(self.operatorInterface.launchCannon).whenPressed(
+            SetCannon(self.cannon, SetCannon.Mode.Launch)
+        )
 
-        commands2.button.POVButton(
-            *self.operatorInterface.returnPositionInput
+        ModifiableJoystickButton(
+            self.operatorInterface.returnPositionInput
         ).whenPressed(SetReturn(self.drive))
 
-        commands2.button.JoystickButton(
-            *self.operatorInterface.closeValves
-        ).whenPressed(SetCannon(self.cannon, SetCannon.Mode.Off))
+        ModifiableJoystickButton(self.operatorInterface.closeValves).whenPressed(
+            SetCannon(self.cannon, SetCannon.Mode.Off)
+        )
 
-        commands2.button.POVButton(*self.operatorInterface.returnModeControl).whileHeld(
+        ModifiableJoystickButton(self.operatorInterface.returnModeControl).whileHeld(
             ParallelCommandGroup(
                 ReturnDrive(
                     self.drive,
-                    self.operatorInterface.scaler,
                     self.operatorInterface.chassisControls.rotationX,
                 ),
                 BlinkLight(self.light, 1, 100),
             )
         )
 
-        commands2.button.POVButton(
-            *self.operatorInterface.pulseTheLights
+        ModifiableJoystickButton(
+            self.operatorInterface.pulseTheLights
         ).toggleWhenPressed(ParallelCommandGroup(PulseLight(self.light, 500, False)))
 
-        # commands2.button.JoystickButton(
-        #     *self.operatorInterface.honkControl
-        # ).whileHeld(HornHonk(self.light2))
+        ModifiableJoystickButton(self.operatorInterface.hornControl).whileHeld(
+            HornHonk(self.horn)
+        )
+
+        ModifiableJoystickButton(self.operatorInterface.lightControl).whileHeld(
+            RelayControl(self.light, lambda: 1.0)
+        )
 
     def getAutonomousCommand(self) -> commands2.Command:
         return self.chooser.getSelected()

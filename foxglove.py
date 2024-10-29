@@ -29,8 +29,6 @@ class FoxglovePublisher:
         self.ch = QueueHandler(self.log_q)
         self.ch.setLevel(logging.DEBUG)
 
-
-
     async def foxglove_serv(self):
         print("initialization of foxglove...")
 
@@ -49,7 +47,9 @@ class FoxglovePublisher:
             self.topic_map = {}
             self.videoStreams = {}
 
-            self.log_chan = await server.add_channel({"topic": "Log", "encoding": "json", "schemaName": "foxglove.Log"})
+            self.log_chan = await server.add_channel(
+                {"topic": "Log", "encoding": "json", "schemaName": "foxglove.Log"}
+            )
 
             robotpy_logger = logging.getLogger("robotpy")
             user_logger = logging.getLogger("your.robot")
@@ -172,7 +172,9 @@ class FoxglovePublisher:
                         await server.send_message(
                             self.topic_map[name],
                             time.time_ns(),
-                            json.dumps({"val": table.getNumberArray(val, 0)}).encode("utf8"),
+                            json.dumps({"val": table.getNumberArray(val, 0)}).encode(
+                                "utf8"
+                            ),
                         )
 
     def run_bot(self, bot):
@@ -181,6 +183,7 @@ class FoxglovePublisher:
 
         robotpy_logger.addHandler(self.ch)
         user_logger.addHandler(self.ch)
+
         async def bot_cmd():
             loop = asyncio.get_running_loop()
             await loop.run_in_executor(None, wpilib.run, bot)

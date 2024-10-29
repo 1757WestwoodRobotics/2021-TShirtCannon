@@ -1,0 +1,210 @@
+[
+  {
+    "name": "/Preferences/forwardsBackwards controller",
+    "type": "int",
+    "value": 0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/forwardsBackwards axis",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/leftRight controller",
+    "type": "int",
+    "value": 0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/leftRight axis",
+    "type": "int",
+    "value": 0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/rotationX controller",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/rotationX axis",
+    "type": "int",
+    "value": 0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/rotationY controller",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/rotationY axis",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/fillCannon controller",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/fillCannon button",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/launchCannon controller",
+    "type": "int",
+    "value": 0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/launchCannon button",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/closeValves controller",
+    "type": "int",
+    "value": 0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/closeValves button",
+    "type": "int",
+    "value": 2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/resetSwerveControl controller",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/resetSwerveControl button",
+    "type": "int",
+    "value": 10,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/returnPositionInput controller",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/returnPositionInput button",
+    "type": "int",
+    "value": 4,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/returnModeControl controller",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/returnModeControl button",
+    "type": "int",
+    "value": 5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/pulseTheLights controller",
+    "type": "int",
+    "value": 0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/pulseTheLights button",
+    "type": "int",
+    "value": 3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/hornControl controller",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/hornControl button",
+    "type": "int",
+    "value": 2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/lightControl controller",
+    "type": "int",
+    "value": 0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/lightControl button",
+    "type": "int",
+    "value": 4,
+    "properties": {
+      "persistent": true
+    }
+  }
+]

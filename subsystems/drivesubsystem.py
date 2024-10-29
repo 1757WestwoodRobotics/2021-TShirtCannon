@@ -9,6 +9,7 @@ from ctre import (
     SensorInitializationStrategy,
     WPI_TalonFX,
 )
+from rev import CANSparkMax, REVLibError
 from navx import AHRS
 from wpimath.geometry import Rotation2d, Pose2d
 from wpimath.kinematics import (
@@ -20,6 +21,8 @@ from wpimath.kinematics import (
 from wpimath.filter import SlewRateLimiter
 from enum import Enum, auto
 from typing import Tuple
+
+from wpimath.kinematics._kinematics import SwerveModulePosition
 import constants
 from util.convenietmath import optimizeAngle
 
@@ -54,6 +57,12 @@ class SwerveModule:
             self.getWheelLinearVelocity(),
             self.getSwerveAngle(),
         )
+
+    def getWheelTotalPosition(self) -> float:
+        raise NotImplementedError("Must be implemented by subclass")
+
+    def getPosition(self) -> SwerveModulePosition:
+        return SwerveModulePosition(self.getWheelTotalPosition(), self.getSwerveAngle())
 
     def applyState(self, state: SwerveModuleState) -> None:
         optimizedState = SwerveModuleState.optimize(state, self.getSwerveAngle())
@@ -105,6 +114,9 @@ class PWMSwerveModule(SwerveModule):
     def getWheelLinearVelocity(self) -> float:
         return self.wheelEncoder.getRate()
 
+    def getWheelTotalPosition(self) -> float:
+        return self.wheelEncoder.getDistance()
+
     def setWheelLinearVelocityTarget(self, wheelLinearVelocityTarget: float) -> None:
         speedFactor = wheelLinearVelocityTarget / constants.kMaxWheelLinearVelocity
         speedFactorClamped = min(max(speedFactor, -1), 1)
@@ -112,6 +124,225 @@ class PWMSwerveModule(SwerveModule):
 
     def reset(self) -> None:
         pass
+
+
+class REVSwerveModule(SwerveModule):
+    """
+    Implementation of SwerveModule for the SDS swerve modules
+    https://www.swervedrivespecialties.com/collections/kits/products/mk4-swerve-module
+        driveMotor: REV NEO Brushless Motor (with built-in encoder) connected to a SparkMax over CAN attached to wheel through gearing
+        steerMotor: REV NEO Brushless Motor (with built-in encoder) connected to a SparkMax over CAN attached to swerve through gearing
+        swerveEncoder: CANCoder
+    """
+
+    def __init__(
+        self,
+        name: str,
+        driveMotor: CANSparkMax,
+        driveMotorInverted: bool,
+        steerMotor: CANSparkMax,
+        steerMotorInverted: bool,
+        swerveEncoder: CANCoder,
+        swerveEncoderOffset: float,
+    ) -> None:
+        SwerveModule.__init__(self, name)
+        self.driveMotor = driveMotor
+        self.driveMotorEncover = self.driveMotor.getEncoder()
+        self.driveMotorController = self.driveMotor.getPIDController()
+        self.driveMotorInverted = driveMotorInverted
+        self.steerMotor = steerMotor
+        self.steerMotorEncoder = self.steerMotor.getEncoder()
+        self.steerMotorController = self.steerMotor.getPIDController()
+        self.steerMotorInverted = steerMotorInverted
+        self.swerveEncoder = swerveEncoder
+        self.swerveEncoderOffset = swerveEncoderOffset
+
+        def ctreCheckError(name: str, errorCode: ErrorCode) -> bool:
+            if (errorCode is not None) and (errorCode != ErrorCode.OK):
+                print("ERROR: {}: {}".format(name, errorCode))
+                return False
+            return True
+
+        def revCheckError(name: str, errorCode: REVLibError) -> bool:
+            if errorCode is not None and errorCode != REVLibError.kOk:
+                print("ERROR: {}: {}".format(name, errorCode))
+                return False
+            return True
+
+        print("Initializing swerve module: {}".format(self.name))
+        print(
+            "   Configuring swerve encoder: CAN ID: {}".format(
+                self.swerveEncoder.getDeviceNumber()
+            )
+        )
+        if not ctreCheckError(
+            "configFactoryDefault",
+            self.swerveEncoder.configFactoryDefault(
+                constants.kConfigurationTimeoutLimit
+            ),
+        ):
+            return
+        if not ctreCheckError(
+            "configSensorInitializationStrategy",
+            self.swerveEncoder.configSensorInitializationStrategy(
+                SensorInitializationStrategy.BootToAbsolutePosition,
+                constants.kConfigurationTimeoutLimit,
+            ),
+        ):
+            return
+        if not ctreCheckError(
+            "configMagnetOffset",
+            self.swerveEncoder.configMagnetOffset(
+                -1 * self.swerveEncoderOffset,  # invert the offset to zero the encoder
+                constants.kConfigurationTimeoutLimit,
+            ),
+        ):
+            return
+        if not ctreCheckError(
+            "configAbsoluteSensorRange",
+            self.swerveEncoder.configAbsoluteSensorRange(
+                AbsoluteSensorRange.Signed_PlusMinus180,
+                constants.kConfigurationTimeoutLimit,
+            ),
+        ):
+            return
+        if not ctreCheckError(
+            "setPositionToAbsolute",
+            self.swerveEncoder.setPositionToAbsolute(
+                constants.kConfigurationTimeoutLimit,
+            ),
+        ):
+            return
+        print("   ... Done")
+
+        print(
+            "   Configuring drive motor: CAN ID: {}".format(
+                self.driveMotor.getDeviceId()
+            )
+        )
+        if not revCheckError(
+            "restoreFactoryDefaults", self.driveMotor.restoreFactoryDefaults()
+        ):
+            return
+        self.driveMotor.setInverted(self.driveMotorInverted)
+        if not revCheckError(
+            "config_kP",
+            self.driveMotorController.setP(
+                constants.kDrivePGain, constants.kDrivePIDSlot
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_kI",
+            self.driveMotorController.setI(
+                constants.kDriveIGain, constants.kDrivePIDSlot
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_kD",
+            self.driveMotorController.setD(
+                constants.kDriveDGain, constants.kDrivePIDSlot
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_PosConvert",
+            self.driveMotorEncover.setPositionConversionFactor(
+                constants.kSwerveMetersPerDriveEncoderRevolution
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_VelConvert",
+            self.driveMotorEncover.setVelocityConversionFactor(
+                constants.kSwerveDriveEncoderRPMperMPS
+            ),
+        ):
+            return
+        print("   ... Done")
+
+        print(
+            "   Configuring steer motor: CAN ID: {}".format(
+                self.steerMotor.getDeviceId()
+            )
+        )
+        if not revCheckError(
+            "restoreFactoryDefaults", self.steerMotor.restoreFactoryDefaults()
+        ):
+            return
+        self.steerMotor.setInverted(self.steerMotorInverted)
+        if not revCheckError(
+            "config_kP",
+            self.steerMotorController.setP(
+                constants.kSteerPGain, constants.kSteerPIDSlot
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_kI",
+            self.steerMotorController.setI(
+                constants.kSteerIGain, constants.kSteerPIDSlot
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_kD",
+            self.steerMotorController.setD(
+                constants.kSteerDGain, constants.kSteerPIDSlot
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_PosConvert",
+            self.steerMotorEncoder.setPositionConversionFactor(
+                constants.kSwerveMotorDegreesPerEncoderRev
+            ),
+        ):
+            return
+        if not revCheckError(
+            "config_VelConvert",
+            self.steerMotorEncoder.setVelocityConversionFactor(
+                constants.kSwerveMotorDegreesPerEncoderRev / 60
+            ),
+        ):
+            return
+        print("   ... Done")
+
+    # the following functions use helpful scaling done on the motor encoders to make the units nicer
+    def getSwerveAngle(self) -> Rotation2d:
+        steerEncoderDegrees = self.steerMotorEncoder.getPosition()
+        return Rotation2d.fromDegrees(steerEncoderDegrees)
+
+    def setSwerveAngle(self, swerveAngle: Rotation2d) -> None:
+        steerEncoderDegrees = swerveAngle.degrees()
+        self.steerMotorEncoder.setPosition(steerEncoderDegrees)
+
+    def setSwerveAngleTarget(self, swerveAngleTarget: Rotation2d) -> None:
+        steerAngleDegrees = swerveAngleTarget.degrees()
+        self.steerMotorController.setReference(
+            steerAngleDegrees, CANSparkMax.ControlType.kPosition
+        )
+
+    def getWheelTotalPosition(self) -> float:
+        return self.driveMotorEncover.getPosition()
+
+    def getWheelLinearVelocity(self) -> float:
+        """meters / second"""
+        driveEncoderRPM = self.driveMotorEncover.getVelocity()
+        return driveEncoderRPM
+
+    def setWheelLinearVelocityTarget(self, wheelLinearVelocityTarget: float) -> None:
+        pass
+        self.driveMotorController.setReference(
+            wheelLinearVelocityTarget, CANSparkMax.ControlType.kVelocity
+        )
+
+    def reset(self) -> None:
+        swerveEncoderAngle = (
+            self.swerveEncoder.getAbsolutePosition() * constants.kRadiansPerDegree
+        )
+        self.setSwerveAngle(Rotation2d(swerveEncoderAngle))
 
 
 class CTRESwerveModule(SwerveModule):
@@ -347,38 +578,54 @@ class DriveSubsystem(SubsystemBase):
         self.yVelDamp = SlewRateLimiter(4.2)
 
         if RobotBase.isReal():
-            self.frontLeftModule = CTRESwerveModule(
+            self.frontLeftModule = REVSwerveModule(
                 constants.kFrontLeftModuleName,
-                WPI_TalonFX(constants.kFrontLeftDriveMotorId),
+                CANSparkMax(
+                    constants.kFrontLeftDriveMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kFrontLeftDriveInverted,
-                WPI_TalonFX(constants.kFrontLeftSteerMotorId),
+                CANSparkMax(
+                    constants.kFrontLeftSteerMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kFrontLeftSteerInverted,
                 CANCoder(constants.kFrontLeftSteerEncoderId),
                 constants.kFrontLeftAbsoluteEncoderOffset,
             )
-            self.frontRightModule = CTRESwerveModule(
+            self.frontRightModule = REVSwerveModule(
                 constants.kFrontRightModuleName,
-                WPI_TalonFX(constants.kFrontRightDriveMotorId),
+                CANSparkMax(
+                    constants.kFrontRightDriveMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kFrontRightDriveInverted,
-                WPI_TalonFX(constants.kFrontRightSteerMotorId),
+                CANSparkMax(
+                    constants.kFrontRightSteerMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kFrontRightSteerInverted,
                 CANCoder(constants.kFrontRightSteerEncoderId),
                 constants.kFrontRightAbsoluteEncoderOffset,
             )
-            self.backLeftModule = CTRESwerveModule(
+            self.backLeftModule = REVSwerveModule(
                 constants.kBackLeftModuleName,
-                WPI_TalonFX(constants.kBackLeftDriveMotorId),
+                CANSparkMax(
+                    constants.kBackLeftDriveMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kBackLeftDriveInverted,
-                WPI_TalonFX(constants.kBackLeftSteerMotorId),
+                CANSparkMax(
+                    constants.kBackLeftSteerMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kBackLeftSteerInverted,
                 CANCoder(constants.kBackLeftSteerEncoderId),
                 constants.kBackLeftAbsoluteEncoderOffset,
             )
-            self.backRightModule = CTRESwerveModule(
+            self.backRightModule = REVSwerveModule(
                 constants.kBackRightModuleName,
-                WPI_TalonFX(constants.kBackRightDriveMotorId),
+                CANSparkMax(
+                    constants.kBackRightDriveMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kBackRightDriveInverted,
-                WPI_TalonFX(constants.kBackRightSteerMotorId),
+                CANSparkMax(
+                    constants.kBackRightSteerMotorId, CANSparkMax.MotorType.kBrushless
+                ),
                 constants.kBackRightSteerInverted,
                 CANCoder(constants.kBackRightSteerEncoderId),
                 constants.kBackRightAbsoluteEncoderOffset,
@@ -434,7 +681,17 @@ class DriveSubsystem(SubsystemBase):
 
         # Create the an object for our odometry, which will utilize sensor data to
         # keep a record of our position on the field.
-        self.odometry = SwerveDrive4Odometry(self.kinematics, self.gyro.getRotation2d())
+        self.odometry = SwerveDrive4Odometry(
+            self.kinematics,
+            self.getRotation(),
+            (
+                self.frontLeftModule.getPosition(),
+                self.frontRightModule.getPosition(),
+                self.backLeftModule.getPosition(),
+                self.backRightModule.getPosition(),
+            ),
+            Pose2d(),
+        )
 
         self.printTimer = Timer()
         # self.printTimer.start()
@@ -445,16 +702,37 @@ class DriveSubsystem(SubsystemBase):
         for module in self.modules:
             module.reset()
         self.gyro.reset()
-        self.odometry.resetPosition(Pose2d(), self.gyro.getRotation2d())
+        self.odometry.resetPosition(
+            self.gyro.getRotation2d(),
+            Pose2d(),
+            self.frontLeftModule.getPosition(),
+            self.frontRightModule.getPosition(),
+            self.backLeftModule.getPosition(),
+            self.backRightModule.getPosition(),
+        )
 
     def setOdometryPosition(self, pose: Pose2d):
         self.gyro.setAngleAdjustment(pose.rotation().degrees())
-        self.odometry.resetPosition(pose, self.gyro.getRotation2d())
+        self.odometry.resetPosition(
+            self.gyro.getRotation2d(),
+            pose,
+            self.frontLeftModule.getPosition(),
+            self.frontRightModule.getPosition(),
+            self.backLeftModule.getPosition(),
+            self.backRightModule.getPosition(),
+        )
 
     def resetGyro(self, pose: Pose2d):
         self.gyro.reset()
         self.gyro.setAngleAdjustment(pose.rotation().degrees())
-        self.odometry.resetPosition(pose, self.gyro.getRotation2d())
+        self.odometry.resetPosition(
+            self.gyro.getRotation2d(),
+            pose,
+            self.frontLeftModule.getPosition(),
+            self.frontRightModule.getPosition(),
+            self.backLeftModule.getPosition(),
+            self.backRightModule.getPosition(),
+        )
 
     def getRotation(self) -> Rotation2d:
         return self.gyro.getRotation2d()
@@ -465,22 +743,20 @@ class DriveSubsystem(SubsystemBase):
         odometry with sensor data.
         """
         self.odometry.update(
-            self.gyro.getRotation2d(),
-            self.frontLeftModule.getState(),
-            self.frontRightModule.getState(),
-            self.backLeftModule.getState(),
-            self.backRightModule.getState(),
+            self.getRotation(),
+            self.frontLeftModule.getPosition(),
+            self.frontRightModule.getPosition(),
+            self.backLeftModule.getPosition(),
+            self.backRightModule.getPosition(),
         )
 
         robotPose = self.odometry.getPose()
 
         robotPoseArray = [robotPose.X(), robotPose.Y(), robotPose.rotation().radians()]
 
-        SmartDashboard.putNumberArray(
-            constants.kRobotPoseArrayKeys, robotPoseArray
-        )
+        SmartDashboard.putNumberArray(constants.kRobotPoseArrayKeys, robotPoseArray)
 
-        if self.printTimer.hasPeriodPassed(constants.kPrintPeriod):
+        if self.printTimer.hasElapsed(constants.kPrintPeriod):
             rX = self.odometry.getPose().translation().X()
             rY = self.odometry.getPose().translation().Y()
             rAngle = int(self.odometry.getPose().rotation().degrees())
@@ -553,12 +829,7 @@ class DriveSubsystem(SubsystemBase):
                 self.odometry.getPose().rotation(),
             )
 
-        dampedSpeeds = ChassisSpeeds(
-            self.xVelDamp.calculate(robotChassisSpeeds.vx),
-            self.yVelDamp.calculate(robotChassisSpeeds.vy),
-            robotChassisSpeeds.omega,
-        )
-        moduleStates = self.kinematics.toSwerveModuleStates(dampedSpeeds)
+        moduleStates = self.kinematics.toSwerveModuleStates(robotChassisSpeeds)
         (
             frontLeftState,
             frontRightState,
